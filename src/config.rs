@@ -49,7 +49,7 @@ impl Project{
         cprint!(Cyan, "Use default project settings? (yes/no)");
         stdin().read_line(&mut input)?;
         match input.to_lowercase().trim(){
-            "yes" => {
+            "no" => {
                 let mut input = String::new();
                 cprint!(Cyan, "Enter Project Name: ");
                 stdin().read_line(&mut input)?;
@@ -64,7 +64,7 @@ impl Project{
                 let template = input.to_string();
                 Ok(Self::new(proj_name.trim(), template.trim(), repo.trim()))
             },
-            "no" => Ok(Project::default()),
+            "yes" => Ok(Project::default()),
             _ => Err(Error::InvalidInput(input))
         }
     }
