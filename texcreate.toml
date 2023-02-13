@@ -1,0 +1,14 @@
+packages = []
+
+[project]
+proj_name = "name"
+template = "basic"
+repo = "mkproj"
+
+[metadata]
+author = "author"
+date = "date"
+title = "title"
+fontsize = 11
+doc_class = "article"
+maketitle = true
