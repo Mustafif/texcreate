@@ -28,7 +28,7 @@ macro_rules! cprint {
 #[derive(StructOpt)]
 #[structopt(
 name = "TexCreate",
-about = "A LaTeX Project Manager by Mustafif Khan"
+about = "A LaTeX Project Creator by Mustafif Khan"
 )]
 enum CLI{
     #[structopt(about = "Initialize TexCreate.")]

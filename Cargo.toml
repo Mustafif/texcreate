@@ -1,5 +1,6 @@
 [package]
 name = "texcreate"
+description = "A LaTeX Project Creator by Mustafif Khan"
 version = "3.0.0-beta.1"
 edition = "2021"
 authors = ["Mustafif Khan"]
