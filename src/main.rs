@@ -13,6 +13,7 @@ use tokio::fs::File;
 use tokio::io::AsyncWriteExt;
 use crate::config::Config;
 use termcolor::Color;
+use tokio::process::Command;
 
 #[macro_export]
 macro_rules! cprint {
@@ -44,6 +45,12 @@ enum CLI{
     Update,
     #[structopt(about = "Shows all available MKProject templates.")]
     List,
+    Compile{
+        #[structopt(short, long)]
+        compiler: String,
+        #[structopt(short, long)]
+        name: String,
+    },
 }
 
 
@@ -111,6 +118,14 @@ async fn main() -> Result<()>{
                 Some(msg) => cprint!(Color::Red, "{}", msg),
                 None => ()
             }
+        }
+        CLI::Compile {compiler, name} => {
+            let _ = Command::new(&compiler)
+                .arg("-output-directory=out")
+                .arg(&name)
+                .output()
+                .await
+                .unwrap();
         }
     }
     Ok(())

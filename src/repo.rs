@@ -18,8 +18,9 @@ async fn get_latest_num() -> u64{
     let client = Client::new();
     let link = format!("{ADDRESS}/repo/latest");
     let resp = client.get(&link).send().await.unwrap();
-    let s = resp.text().await.unwrap();
-    let num: u64= s.trim().parse().unwrap();
+    let b = resp.bytes().await.unwrap();
+    let s= String::from_utf8(b.to_vec()).unwrap();
+    let num = s.trim().parse::<u64>().unwrap();
     num
 }
 
