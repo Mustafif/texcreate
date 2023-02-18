@@ -113,3 +113,7 @@ name.pdf
   - Required creating the `Compiler` type and making changes to `Project`
 - Added a `-r/--repo` flag to the `list` command 
   - Allows to specify the `mkproj` or `custom` repo
+
+## Changes in Beta 3 
+- Added the `texcgen` command
+  - Allows users to create/interact with `texc_gen` using `texcreate`
