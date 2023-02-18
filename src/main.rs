@@ -43,8 +43,11 @@ enum CLI{
     #[structopt(about = "Updates to the latest MKProject templates.")]
     Update,
     #[structopt(about = "Shows all available MKProject templates.")]
-    List,
-    #[structopt(about = "Compiles a TexCreate Project")]
+    List{
+        #[structopt(short, long)]
+        repo: Option<String>
+    },
+    #[structopt(about = "Compiles a TexCreate project.")]
     Compile
 }
 
@@ -105,19 +108,34 @@ async fn main() -> Result<()>{
             // updates to the latest repo
             repo_update().await?;
         }
-        CLI::List => {
-            // displays all mkproj repos
-            // TODO!: Add flag to choose either mkproj or custom repo
-            repo_display().await?;
-            match update_alert().await{
-                Some(msg) => cprint!(Color::Red, "{}", msg),
-                None => ()
+        CLI::List {repo}=> {
+            match repo{
+                None => mkproj_repo_list().await?,
+                Some(repo) => {
+                    match repo.as_str(){
+                        "custom" => {
+                            let dir = Dir::new();
+                            dir.read_custom_repo().await?;
+                        }
+                        _ => mkproj_repo_list().await?
+                    }
+                }
             }
+
         }
         CLI::Compile => {
             let compiler = Compiler::from_file().await?;
             compiler.compile().await?;
         }
+    }
+    Ok(())
+}
+
+async fn mkproj_repo_list() -> Result<()>{
+    repo_display().await?;
+    match update_alert().await{
+        Some(msg) => cprint!(Color::Red, "{}", msg),
+        None => ()
     }
     Ok(())
 }

@@ -1,5 +1,5 @@
 # TexCreate by Mustafif Khan
-## Version 3.0.0-beta.1 
+## Version 3.0.0-beta.2 
 
 > This project is under the [MIT License](LICENSE)
 
@@ -23,7 +23,7 @@ allows it to be easily downloaded in the latest releases and TexCreate is able t
 ### Installing
 
 ```bash
-$ cargo install texcreate --version 3.0.0.beta.1
+$ cargo install texcreate --version 3.0.0.beta.2
 ```
 
 The new thing with TexCreate is that templates are locally stored in the directory `$HOME/.texcreate` where the structure 
@@ -91,12 +91,25 @@ If we use `ls` in the project, we can see the following structure:
 
 ```bash
 $ ls 
-include  name.tex  out
+include  name.tex compiler.toml out
 ```
 
-> At the moment there is no support for compiling using `texcreate`, but this may change in the future hence the 
-> reason the `out` directory exists. For the current moment you may use your latex compiler like the following: 
+To compile we can use the `compile` command, do note you may change the LaTeX compiler used in the `compiler.toml` file. 
+The default is `pdflatex` when a project is created. 
 
 ```bash
-$ <compiler> -output-directory=out name.tex 
+# make sure to be in project root
+$ texcreate compile 
+$ ls out 
+name.pdf 
 ```
+
+> Make sure to not change the `proj_name` filed in `compiler.toml` or the command will not be able to compile. 
+
+
+## Changes in Beta 2 
+
+- Added the `compile` command 
+  - Required creating the `Compiler` type and making changes to `Project`
+- Added a `-r/--repo` flag to the `list` command 
+  - Allows to specify the `mkproj` or `custom` repo

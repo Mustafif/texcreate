@@ -6,6 +6,7 @@ use texcore::template::Template;
 use tokio::io::AsyncWriteExt;
 use tokio::fs::{create_dir, File, read_to_string, remove_dir_all};
 use texcreate_repo::Repo;
+use walkdir::WalkDir;
 use crate::error::*;
 
 
@@ -53,6 +54,16 @@ impl Dir{
         let s = read_to_string(&path).await?;
         let repo = Repo::from_string(&s);
         Ok(repo)
+    }
+    pub async fn read_custom_repo(&self) -> Result<()>{
+        for entry in WalkDir::new(&self.custom){
+            let entry = entry.unwrap();
+            if entry.path().is_dir(){
+                continue
+            }
+            println!("{}", entry.file_name().to_str().unwrap())
+        }
+        Ok(())
     }
     pub async fn save_repo(&self, url: &str) -> Result<()>{
         let repo = Repo::get_repo(url).await;
