@@ -1,5 +1,5 @@
 # TexCreate by Mustafif Khan
-## Version 3.0.0-beta.2 
+## Version 3.0.0-beta.3 
 
 > This project is under the [MIT License](LICENSE)
 
