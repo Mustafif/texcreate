@@ -11,9 +11,8 @@ use error::*;
 use structopt::StructOpt;
 use tokio::fs::File;
 use tokio::io::AsyncWriteExt;
-use crate::config::Config;
+use crate::config::{Compiler, Config};
 use termcolor::Color;
-use tokio::process::Command;
 
 #[macro_export]
 macro_rules! cprint {
@@ -45,12 +44,8 @@ enum CLI{
     Update,
     #[structopt(about = "Shows all available MKProject templates.")]
     List,
-    Compile{
-        #[structopt(short, long)]
-        compiler: String,
-        #[structopt(short, long)]
-        name: String,
-    },
+    #[structopt(about = "Compiles a TexCreate Project")]
+    Compile
 }
 
 
@@ -119,13 +114,9 @@ async fn main() -> Result<()>{
                 None => ()
             }
         }
-        CLI::Compile {compiler, name} => {
-            let _ = Command::new(&compiler)
-                .arg("-output-directory=out")
-                .arg(&name)
-                .output()
-                .await
-                .unwrap();
+        CLI::Compile => {
+            let compiler = Compiler::from_file().await?;
+            compiler.compile().await?;
         }
     }
     Ok(())

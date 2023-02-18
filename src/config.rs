@@ -2,12 +2,14 @@ use std::path::PathBuf;
 use toml::{to_string_pretty, from_str};
 use serde::{Deserialize, Serialize};
 use texcore::{Input, Level, Metadata};
-use tokio::fs::{create_dir, read_to_string};
+use tokio::fs::{create_dir, File, read_to_string, remove_file};
 use crate::dir::Dir;
 use crate::error::{Error, Result};
 use crate::cprint;
 use termcolor::Color::Cyan;
 use std::io::stdin;
+use tokio::io::AsyncWriteExt;
+use tokio::process::Command;
 
 #[derive(Debug, Clone, Deserialize, Serialize)]
 pub struct Config{
@@ -20,6 +22,13 @@ pub struct Project{
     proj_name: String,
     template: String,
     repo: String
+}
+
+#[derive(Debug, Clone, Deserialize, Serialize)]
+pub struct Compiler{
+    compiler: String,
+    proj_name: String,
+    flags: Vec<String>
 }
 
 impl Default for Project{
@@ -76,9 +85,11 @@ impl Project{
     }
     pub async fn create_layout(&self) -> Result<()>{
         let (main_path, incl_path, out_path) = self.paths();
+        let compiler = Compiler::new(&self);
         create_dir(&main_path).await?;
         create_dir(&incl_path).await?;
         create_dir(&out_path).await?;
+        compiler.create_file().await?;
         Ok(())
     }
 }
@@ -121,6 +132,46 @@ impl Config{
         let str_path = PathBuf::from("include").join("structure");
         let input = Input::new(str_path, Some(Level::Meta));
         template.write_tex_files(main_path, incl_path, input)?;
+        Ok(())
+    }
+}
+
+impl Compiler{
+    // Create a new default compiler with pdflatex as compiler
+    pub fn new(project: &Project) -> Self{
+        Self{
+            compiler: "pdflatex".to_string(),
+            proj_name: project.proj_name.to_string(),
+            flags: vec![],
+        }
+    }
+    // path will always be `compiler.toml`
+    pub async fn from_file() -> Result<Self>{
+        let s = read_to_string("compiler.toml").await?;
+        Ok(from_str(&s).unwrap())
+    }
+    pub async fn create_file(&self) -> Result<()>{
+        let s = to_string_pretty(&self).unwrap();
+        let path = PathBuf::from(&self.proj_name).join("compiler.toml");
+        let mut file = File::create(path).await?;
+        file.write_all(s.as_bytes()).await?;
+        Ok(())
+    }
+    pub async fn compile(&self) -> Result<()>{
+        let _ = Command::new(&self.compiler)
+            .arg("-output-directory=out")
+            .args(&self.flags)
+            .arg(&self.proj_name)
+            .output()
+            .await
+            .expect("Couldn't compile LaTeX document");
+        // remove aux and log files
+        let out = PathBuf::from("out");
+        let aux = out.join(&format!("{}.aux", &self.proj_name));
+        let log = out.join(&format!("{}.log", &self.proj_name));
+        remove_file(aux).await?;
+        remove_file(log).await?;
+        println!("The project {} successfully compiled!", &self.proj_name);
         Ok(())
     }
 }
