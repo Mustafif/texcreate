@@ -150,9 +150,7 @@ impl Compiler{
         let s = read_to_string("compiler.toml").await?;
         Ok(from_str(&s).unwrap())
     }
-    pub fn to_string(&self) -> String{
-        to_string_pretty(&self).unwrap()
-    }
+   // pub fn to_string(&self) -> String{ to_string_pretty(&self).unwrap() }
     pub async fn create_file(&self) -> Result<()>{
         let s = to_string_pretty(&self).unwrap();
         let path = PathBuf::from(&self.proj_name).join("compiler.toml");

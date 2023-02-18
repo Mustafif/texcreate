@@ -1190,7 +1190,7 @@ dependencies = [
 
 [[package]]
 name = "texcreate"
-version = "3.0.0-beta.2"
+version = "3.0.0-beta.3"
 dependencies = [
  "dirs",
  "git2",
