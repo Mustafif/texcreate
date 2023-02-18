@@ -2,6 +2,7 @@ mod repo;
 mod dir;
 mod error;
 mod config;
+mod texc_gen;
 
 use std::io::stdin;
 use std::path::PathBuf;
@@ -13,6 +14,7 @@ use tokio::fs::File;
 use tokio::io::AsyncWriteExt;
 use crate::config::{Compiler, Config};
 use termcolor::Color;
+use crate::texc_gen::Commands;
 
 #[macro_export]
 macro_rules! cprint {
@@ -48,7 +50,9 @@ enum CLI{
         repo: Option<String>
     },
     #[structopt(about = "Compiles a TexCreate project.")]
-    Compile
+    Compile,
+    #[structopt(about = "Runs a TexcGen Project.")]
+    Texcgen(Commands)
 }
 
 
@@ -126,6 +130,9 @@ async fn main() -> Result<()>{
         CLI::Compile => {
             let compiler = Compiler::from_file().await?;
             compiler.compile().await?;
+        }
+        CLI::Texcgen(c) => {
+            c.run_command().await;
         }
     }
     Ok(())
