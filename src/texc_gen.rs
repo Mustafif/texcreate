@@ -33,14 +33,20 @@ impl ToString for Commands{
             Commands::Init => {
                 "init".to_string()
             }
-            Commands::Gen { .. } => {
-                "gen".to_string()
+            Commands::Gen { level} => {
+                match level{
+                    Some(l) => format!("gen -l {l}"),
+                    None => "gen".to_string()
+                }
             }
-            Commands::GenAll { .. } => {
-                "gen-all".to_string()
+            Commands::GenAll { level } => {
+                match level {
+                    Some(l) => format!("gen-all -l {l}"),
+                    None => "gen-all".to_string()
+                }
             }
-            Commands::Save { .. } => {
-                "save".to_string()
+            Commands::Save { name } => {
+                format!("save -n {name}")
             }
             _ => {
                 unimplemented!("This command is unimplemented")
