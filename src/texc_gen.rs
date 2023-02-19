@@ -37,7 +37,7 @@ impl ToString for Commands{
                 "gen".to_string()
             }
             Commands::GenAll { .. } => {
-                "gen_all".to_string()
+                "gen-all".to_string()
             }
             Commands::Save { .. } => {
                 "save".to_string()
