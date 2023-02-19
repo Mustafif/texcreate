@@ -33,20 +33,14 @@ impl ToString for Commands{
             Commands::Init => {
                 "init".to_string()
             }
-            Commands::Gen { level} => {
-                match level{
-                    Some(l) => format!("gen -l {l}"),
-                    None => "gen".to_string()
-                }
+            Commands::Gen { .. } => {
+                "gen".to_string()
             }
-            Commands::GenAll { level } => {
-                match level {
-                    Some(l) => format!("gen-all -l {l}"),
-                    None => "gen-all".to_string()
-                }
+            Commands::GenAll { .. } => {
+                "gen-all".to_string()
             }
-            Commands::Save { name } => {
-                format!("save -n {name}")
+            Commands::Save { .. } => {
+                "save".to_string()
             }
             _ => {
                 unimplemented!("This command is unimplemented")
@@ -63,12 +57,42 @@ impl Commands{
             }
             _ => {
                 let _ = Command::new("cargo")
-                .args(["run", "--", &self.to_string()])
+                .args(&self.arguments())
                 .spawn()
                 .unwrap();
             }
         }
-
+    }
+    fn arguments(&self) -> Vec<String>{
+        let mut vec = Vec::new();
+        vec.push("run".to_string());
+        vec.push("--".to_string());
+        match &self{
+            Commands::New => {
+                unimplemented!("not implemented for new")
+            }
+            Commands::Init => {
+                vec.push("init".to_string())
+            }
+            Commands::Gen { level } => {
+                let level = level.unwrap_or(1);
+                vec.push("gen".to_string());
+                vec.push("-l".to_string());
+                vec.push(level.to_string());
+            }
+            Commands::GenAll { level } => {
+                let level = level.unwrap_or(1);
+                vec.push("gen-all".to_string());
+                vec.push("-l".to_string());
+                vec.push(level.to_string());
+            }
+            Commands::Save { name } => {
+                vec.push("save".to_string());
+                vec.push("-n".to_string());
+                vec.push(name.to_string());
+            }
+        }
+        vec
     }
 }
 
