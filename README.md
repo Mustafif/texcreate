@@ -16,14 +16,12 @@ is done in a web service `texcweb`. The ability to put a template into a JSON fi
 allows it to be easily downloaded in the latest releases and TexCreate is able to know about these updates because of `texcweb`. 
 
 
-## How to get started? 
-
-> **Note: In this beta only one mkproj template is available, but custom template support is already enabled**
+## How to get started?
 
 ### Installing
 
 ```bash
-$ cargo install texcreate --version 3.0.0.beta.3
+$ cargo install texcreate --version 3.0.0.beta.4
 ```
 
 The new thing with TexCreate is that templates are locally stored in the directory `$HOME/.texcreate` where the structure 
@@ -104,7 +102,7 @@ $ ls out
 name.pdf 
 ```
 
-> Make sure to not change the `proj_name` filed in `compiler.toml` or the command will not be able to compile. 
+> Make sure to not change the `proj_name` field in `compiler.toml` or the command will not be able to compile. 
 
 
 ## Changes in Beta 2 
@@ -117,3 +115,8 @@ name.pdf
 ## Changes in Beta 3 
 - Added the `texcgen` command
   - Allows users to create/interact with `texc_gen` using `texcreate`
+
+## Changes in Beta 4 
+- Fixed the `texcgen` command 
+- Altered the `update_alert()` to show a prettier message as shown below: 
+
