@@ -118,5 +118,5 @@ name.pdf
 
 ## Changes in Beta 4 
 - Fixed the `texcgen` command 
-- Altered the `update_alert()` to show a prettier message as shown below: 
+- Altered the `update_alert()` to show a prettier message 
 
