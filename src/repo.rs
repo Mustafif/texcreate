@@ -68,6 +68,7 @@ pub async fn repo_update() -> Result<()>{
 }
 
 pub async fn repo_display()  -> Result<()>{
+    cprint!(Color::White, "\r");
     let dir = Dir::new();
     let repo = dir.read_repo().await?;
     repo.display();
@@ -82,8 +83,20 @@ pub async fn update_alert() -> Option<String>{
             let v = r.version();
             let current = get_latest_num().await;
             if current > v{
-                let msg = format!("Update to the latest repo: v{current}...");
-                Some(msg)
+                let mut vec = Vec::new();
+
+                let msg = format!("| Update to the latest repo: v{current}! |");
+                let pattern = {
+                    let mut p = String::new();
+                    for _ in 0..msg.trim().len(){
+                        p.push('-')
+                    }
+                    p
+                };
+                vec.push(pattern.to_string());
+                vec.push(msg);
+                vec.push(pattern);
+                Some(vec.join("\n"))
             } else {
                 None
             }

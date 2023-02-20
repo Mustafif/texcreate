@@ -3,7 +3,7 @@ packages = []
 [project]
 proj_name = "name"
 template = "basic"
-repo = "custom"
+repo = "mkproj"
 
 [metadata]
 author = "author"

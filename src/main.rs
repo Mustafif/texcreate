@@ -75,6 +75,7 @@ async fn main() -> Result<()>{
             repo_update().await?;
         }
         CLI::New => {
+            alert().await;
             // for the moment creates default config
             let config = Config::new()?;
             let s = config.to_string();
@@ -92,21 +93,14 @@ async fn main() -> Result<()>{
             let mut file = File::create(file_name).await?;
             file.write_all(s.as_bytes()).await?;
             cprint!(Color::Green, "Successfully created `{}`", file_name);
-            match update_alert().await{
-                Some(msg) => cprint!(Color::Red, "{}", msg),
-                None => ()
-            }
         }
         CLI::Build{file} => {
+            alert().await;
             // read config
             let path = file.unwrap_or(PathBuf::from("texcreate.toml"));
             let config = Config::from_file(path).await?;
             config.build().await?;
             cprint!(Color::Green, "Successfully created `{}`", config.name());
-            match update_alert().await{
-                Some(msg) => cprint!(Color::Red, "{}", msg),
-                None => ()
-            }
         }
         CLI::Update => {
             // updates to the latest repo
@@ -139,10 +133,14 @@ async fn main() -> Result<()>{
 }
 
 async fn mkproj_repo_list() -> Result<()>{
+    alert().await;
     repo_display().await?;
+    Ok(())
+}
+
+async fn alert(){
     match update_alert().await{
         Some(msg) => cprint!(Color::Red, "{}", msg),
         None => ()
     }
-    Ok(())
 }
