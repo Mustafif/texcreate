@@ -27,6 +27,7 @@ pub struct WebConfig{
     date: String,
     title: String,
     fontsize: u8,
+    papersize: String,
     doc_class: String,
 }
 
@@ -43,7 +44,7 @@ impl WebConfig{
         }).await.unwrap()
     }
     fn metadata(&self) -> Metadata{
-        Metadata::new(&self.author, &self.date, &self.title, self.fontsize, &self.doc_class, true)
+        Metadata::new(&self.author, &self.date, &self.title, self.fontsize, &self.papersize,&self.doc_class, true)
     }
     pub async fn zip(&self) -> Result<String>{
         use std::fs;

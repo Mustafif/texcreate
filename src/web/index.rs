@@ -45,6 +45,8 @@ body, h1,h2,h3,h4,h5,h6 {font-family: "Montserrat", sans-serif}
     <input class="w3-teal w3-button" type="text" name="title" id="title" placeholder="Title"><br>
     <label for="fontsize">Font Size</label><br>
     <input class="w3-teal w3-button" type="text" name="fontsize" id="fontsize" placeholder="Font Size"><br>
+    <label for="papersize">Paper Size</label><br>
+    <input class="w3-teal w3-button" type="text" name="papersize" id="papersize" placeholder="Paper Size"><br>
     <label for="doc_class">Document Class</label><br>
     <input class="w3-teal w3-button" type="text" name="doc_class" id="doc_class" placeholder="Document Class"><br>
     <br>

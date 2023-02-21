@@ -1,7 +1,7 @@
 packages = []
 
 [project]
-proj_name = "name"
+proj_name = "Project"
 template = "basic"
 repo = "mkproj"
 
@@ -10,5 +10,6 @@ author = "author"
 date = "date"
 title = "title"
 fontsize = 11
+papersize = "letterpaper"
 doc_class = "article"
 maketitle = true

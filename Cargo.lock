@@ -1764,9 +1764,9 @@ dependencies = [
 
 [[package]]
 name = "texcore"
-version = "0.4.17"
+version = "0.4.18"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "704a28e9e92e418e8d8aa60a9554c691690547631a07ca559f9a643bc6fcd20d"
+checksum = "1075463d8b565613db4dd45bf48902a97b40b862cfc3ed076697039bb47e4e12"
 dependencies = [
  "serde",
  "serde_json",
