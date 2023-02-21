@@ -3,6 +3,7 @@ mod dir;
 mod error;
 mod config;
 mod texc_gen;
+mod web;
 
 use std::io::stdin;
 use std::path::PathBuf;
@@ -10,7 +11,7 @@ use dir::Dir;
 use repo::*;
 use error::*;
 use structopt::StructOpt;
-use tokio::fs::File;
+use tokio::fs::{File, remove_file};
 use tokio::io::AsyncWriteExt;
 use crate::config::{Compiler, Config};
 use termcolor::Color;
@@ -42,6 +43,11 @@ enum CLI{
         #[structopt(short, long, parse(from_os_str))]
         file: Option<PathBuf>
     },
+    #[structopt(about = "Zip a project using a config file.")]
+    Zip{
+        #[structopt(short, long, parse(from_os_str))]
+        file: Option<PathBuf>
+    },
     #[structopt(about = "Updates to the latest MKProject templates.")]
     Update,
     #[structopt(about = "Shows all available MKProject templates.")]
@@ -52,7 +58,11 @@ enum CLI{
     #[structopt(about = "Compiles a TexCreate project.")]
     Compile,
     #[structopt(about = "Runs a TexcGen Project.")]
-    Texcgen(Commands)
+    Texcgen(Commands),
+    #[structopt(about = "Opens up `texcreate.mkproj.com` on default browser.")]
+    Open,
+    #[structopt(about = "Runs a web service to create TexCreate projects.")]
+    Web,
 }
 
 
@@ -102,6 +112,14 @@ async fn main() -> Result<()>{
             config.build().await?;
             cprint!(Color::Green, "Successfully created `{}`", config.name());
         }
+        CLI::Zip {file} => {
+            alert().await;
+            // read config
+            let path = file.unwrap_or(PathBuf::from("texcreate.toml"));
+            let config = Config::from_file(path).await?;
+            let name = config.zip().await?;
+            cprint!(Color::Green, "Successfully created `{}`", name);
+        }
         CLI::Update => {
             // updates to the latest repo
             repo_update().await?;
@@ -127,6 +145,13 @@ async fn main() -> Result<()>{
         }
         CLI::Texcgen(c) => {
             c.run_command().await;
+        }
+        CLI::Open => {
+            open::that("https://texcreate.mkproj.com")?;
+        }
+        CLI::Web => {
+            let _ = web::web().launch().await.unwrap();
+            remove_file("index.html").await?;
         }
     }
     Ok(())

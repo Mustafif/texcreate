@@ -1,3 +1,4 @@
+
 use std::path::PathBuf;
 use toml::{to_string_pretty, from_str};
 use serde::{Deserialize, Serialize};
@@ -7,9 +8,11 @@ use crate::dir::Dir;
 use crate::error::{Error, Result};
 use crate::cprint;
 use termcolor::Color::Cyan;
-use std::io::stdin;
+use std::io::{stdin, Write};
 use tokio::io::AsyncWriteExt;
 use tokio::process::Command;
+use zip::write::FileOptions;
+use zip::{CompressionMethod, ZipWriter};
 
 #[derive(Debug, Clone, Deserialize, Serialize)]
 pub struct Config{
@@ -85,7 +88,7 @@ impl Project{
     }
     pub async fn create_layout(&self) -> Result<()>{
         let (main_path, incl_path, out_path) = self.paths();
-        let compiler = Compiler::new(&self);
+        let compiler = Compiler::new(&self.proj_name);
         create_dir(&main_path).await?;
         create_dir(&incl_path).await?;
         create_dir(&out_path).await?;
@@ -134,14 +137,50 @@ impl Config{
         template.write_tex_files(main_path, incl_path, input)?;
         Ok(())
     }
+    pub async fn zip(&self) -> Result<String>{
+        use std::fs;
+        let zip_name = format!("{}.zip", &self.name());
+        let mut writer = ZipWriter::new(fs::File::create(&zip_name)?);
+        let option = FileOptions::default().compression_method(CompressionMethod::Stored);
+        // add directories
+        writer.add_directory("out", option).expect("Coudln't add out directory");
+        writer.add_directory("include", option).expect("Couldn't add include directory");
+
+        let main_path = format!("{}.tex", &self.name());
+        let str_path = PathBuf::from("include").join("structure.tex");
+
+        let dir = Dir::new();
+        let template = dir.search(&self.template(), &self.repo()).await?;
+        let input = Input::new(str_path.clone(), Some(Level::Meta));
+        let (main_data, str_data) = template.to_latex_split_string(input);
+
+        let compiler = Compiler::new(&self.name());
+        let compiler_data = compiler.to_string();
+
+        // write to main file
+        writer.start_file(&main_path, option).expect("Couldn't start main file");
+        writer.write_all(main_data.as_bytes()).expect("Couldn't write to main file");
+
+        // write to structure.tex
+        writer.start_file(str_path.to_str().unwrap(), option).expect("Couldn't start structure.tex");
+        writer.write_all(str_data.as_bytes()).expect("Couldn't write to structure.tex");
+
+        // write compiler.toml
+        writer.start_file("compiler.toml", option).expect("Couldn't start compiler.toml");
+        writer.write_all(compiler_data.as_bytes()).expect("Couldn't write to compiler.toml");
+
+
+        let _ = writer.finish().unwrap();
+        Ok(zip_name)
+    }
 }
 
 impl Compiler{
     // Create a new default compiler with pdflatex as compiler
-    pub fn new(project: &Project) -> Self{
+    pub fn new(proj_name: &str) -> Self{
         Self{
             compiler: "pdflatex".to_string(),
-            proj_name: project.proj_name.to_string(),
+            proj_name: proj_name.to_string(),
             flags: vec![],
         }
     }
@@ -150,7 +189,7 @@ impl Compiler{
         let s = read_to_string("compiler.toml").await?;
         Ok(from_str(&s).unwrap())
     }
-   // pub fn to_string(&self) -> String{ to_string_pretty(&self).unwrap() }
+   pub fn to_string(&self) -> String{ to_string_pretty(&self).unwrap() }
     pub async fn create_file(&self) -> Result<()>{
         let s = to_string_pretty(&self).unwrap();
         let path = PathBuf::from(&self.proj_name).join("compiler.toml");

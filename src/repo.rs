@@ -6,15 +6,15 @@ use crate::dir::Dir;
 use crate::cprint;
 use termcolor::Color;
 
-fn gh_link(num: u64, name: &str) -> String{
+pub fn gh_link(num: u64, name: &str) -> String{
     format!("https://github.com/MKProj/mkproj_texcgen/releases/download/v{num}/{name}.json")
 }
 
-fn repo_link(num: u64) -> String{
+pub fn repo_link(num: u64) -> String{
     format!("https://github.com/MKProj/mkproj_texcgen/releases/download/v{num}/repo.toml")
 }
 
-async fn get_latest_num() -> u64{
+pub async fn get_latest_num() -> u64{
     let client = Client::new();
     let link = format!("{ADDRESS}/repo/latest");
     let resp = client.get(&link).send().await.unwrap();
