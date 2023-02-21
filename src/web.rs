@@ -2,7 +2,7 @@ mod index;
 
 use std::path::PathBuf;
 use reqwest::Client;
-use rocket::{FromForm, post, get, Rocket, Build, routes};
+use rocket::{FromForm, post, get, Rocket, Build, routes, Config};
 use rocket::form::Form;
 use rocket::fs::NamedFile;
 use texcore::{Input, Level, Metadata};
@@ -131,5 +131,12 @@ async fn texc_post(input: Form<WebConfig>) -> Option<NamedFile>{
 }
 
 pub fn web() -> Rocket<Build>{
-    rocket::build().mount("/", routes![texc_index, texc_post])
+    let config = Config::figment()
+        .merge(("cli_color", true))
+        .merge(("port", 8000))
+        .merge(("log_level", "debug"))
+        .merge(("keep_alive", 5));
+    rocket::build()
+        .configure(config)
+        .mount("/", routes![texc_index, texc_post])
 }

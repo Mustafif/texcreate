@@ -1,5 +1,5 @@
 # TexCreate by Mustafif Khan
-## Version 3.0.0-beta.5
+## Version 3.0.0-beta.6
 
 > This project is under the [MIT License](LICENSE)
 
@@ -21,7 +21,7 @@ allows it to be easily downloaded in the latest releases and TexCreate is able t
 ### Installing
 
 ```bash
-$ cargo install texcreate --version 3.0.0.beta.5
+$ cargo install texcreate --version 3.0.0.beta.6
 ```
 
 The new thing with TexCreate is that templates are locally stored in the directory `$HOME/.texcreate` where the structure 
@@ -127,3 +127,9 @@ name.pdf
   - Opens [texcreate.mkproj.com](https://texcreate.mkproj.com) in their default browser
 - Added the `web` command
   - Runs a web service to create TexCreate projects 
+
+## Changes in Beta 6 
+- Updated to `texcore 0.4.18`
+- Fixed breaking in `3.0.0-beta.5`
+- Fixed logging in `web` command 
+- Added `papersize` option to `WebConfig` because of update to `texcore`
