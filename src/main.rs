@@ -1,21 +1,22 @@
-mod repo;
+mod config;
 mod dir;
 mod error;
-mod config;
+mod repo;
 mod texc_gen;
 mod web;
 
+use crate::config::{Compiler, Config};
+use crate::texc_gen::Commands;
+use dir::Dir;
+use error::*;
+use repo::*;
 use std::io::stdin;
 use std::path::PathBuf;
-use dir::Dir;
-use repo::*;
-use error::*;
 use structopt::StructOpt;
-use tokio::fs::{File, remove_file};
-use tokio::io::AsyncWriteExt;
-use crate::config::{Compiler, Config};
 use termcolor::Color;
-use crate::texc_gen::Commands;
+use tokio::fs::{remove_file, File};
+use tokio::io::AsyncWriteExt;
+use tokio::spawn;
 
 #[macro_export]
 macro_rules! cprint {
@@ -29,31 +30,28 @@ macro_rules! cprint {
 }
 
 #[derive(StructOpt)]
-#[structopt(
-name = "TexCreate",
-about = "A LaTeX Project Creator by Mustafif Khan"
-)]
-enum CLI{
+#[structopt(name = "TexCreate", about = "A LaTeX Project Creator by Mustafif Khan")]
+enum CLI {
     #[structopt(about = "Initialize TexCreate.")]
     Init,
     #[structopt(about = "Create a new project's config file.")]
     New,
     #[structopt(about = "Build a project using a config file.")]
-    Build{
+    Build {
         #[structopt(short, long, parse(from_os_str))]
-        file: Option<PathBuf>
+        file: Option<PathBuf>,
     },
     #[structopt(about = "Zip a project using a config file.")]
-    Zip{
+    Zip {
         #[structopt(short, long, parse(from_os_str))]
-        file: Option<PathBuf>
+        file: Option<PathBuf>,
     },
     #[structopt(about = "Updates to the latest MKProject templates.")]
     Update,
     #[structopt(about = "Shows all available MKProject templates.")]
-    List{
+    List {
         #[structopt(short, long)]
-        repo: Option<String>
+        repo: Option<String>,
     },
     #[structopt(about = "Compiles a TexCreate project.")]
     Compile,
@@ -65,11 +63,10 @@ enum CLI{
     Web,
 }
 
-
 #[tokio::main]
-async fn main() -> Result<()>{
+async fn main() -> Result<()> {
     let cli = CLI::from_args();
-    match cli{
+    match cli {
         CLI::Init => {
             // initializes the texcreate directory
             // and gets the latest repo
@@ -80,9 +77,23 @@ async fn main() -> Result<()>{
                 "Creating TeXCreate directory layout at: {}",
                 dir.main_dir.display()
             );
-            dir.build().await?;
+            let layout_task = spawn(async move { dir.build().await }).await.ok();
+            match layout_task {
+                None => {
+                    cprint!(Color::Red, "Failed to build TexCreate directory!");
+                    return Ok(());
+                }
+                Some(r) => r?,
+            }
             // gets the latest repo for mkproj
-            repo_update().await?;
+            let update_task = spawn(async move { repo_update().await }).await.ok();
+            match update_task {
+                None => {
+                    cprint!(Color::Red, "Failed to update to latest repo!");
+                    return Ok(());
+                }
+                Some(r) => r?,
+            }
         }
         CLI::New => {
             alert().await;
@@ -90,11 +101,14 @@ async fn main() -> Result<()>{
             let config = Config::new()?;
             let s = config.to_string();
             let mut file_name = String::new();
-            cprint!(Color::Yellow, "Enter config file name (default: texcreate.toml): ");
+            cprint!(
+                Color::Yellow,
+                "Enter config file name (default: texcreate.toml): "
+            );
             stdin().read_line(&mut file_name)?;
             let file_name = {
                 let file_name = file_name.trim();
-                if file_name.is_empty(){
+                if file_name.is_empty() {
                     "texcreate.toml"
                 } else {
                     file_name
@@ -104,41 +118,51 @@ async fn main() -> Result<()>{
             file.write_all(s.as_bytes()).await?;
             cprint!(Color::Green, "Successfully created `{}`", file_name);
         }
-        CLI::Build{file} => {
+        CLI::Build { file } => {
             alert().await;
             // read config
             let path = file.unwrap_or(PathBuf::from("texcreate.toml"));
             let config = Config::from_file(path).await?;
-            config.build().await?;
-            cprint!(Color::Green, "Successfully created `{}`", config.name());
+            let name = config.name();
+            let task = spawn(async move { config.build().await }).await.ok();
+            match task {
+                None => {
+                    cprint!(Color::Red, "Failed to build project!");
+                    return Ok(());
+                }
+                Some(r) => r?,
+            }
+            cprint!(Color::Green, "Successfully created `{}`", name);
         }
-        CLI::Zip {file} => {
+        CLI::Zip { file } => {
             alert().await;
             // read config
             let path = file.unwrap_or(PathBuf::from("texcreate.toml"));
             let config = Config::from_file(path).await?;
-            let name = config.zip().await?;
+            let task = spawn(async move { config.zip().await }).await.ok();
+            let name = match task {
+                None => {
+                    cprint!(Color::Red, "Failed to zip project!");
+                    return Ok(());
+                }
+                Some(s) => s?,
+            };
             cprint!(Color::Green, "Successfully created `{}`", name);
         }
         CLI::Update => {
             // updates to the latest repo
             repo_update().await?;
         }
-        CLI::List {repo}=> {
-            match repo{
-                None => mkproj_repo_list().await?,
-                Some(repo) => {
-                    match repo.as_str(){
-                        "custom" => {
-                            let dir = Dir::new();
-                            dir.read_custom_repo().await?;
-                        }
-                        _ => mkproj_repo_list().await?
-                    }
+        CLI::List { repo } => match repo {
+            None => mkproj_repo_list().await?,
+            Some(repo) => match repo.as_str() {
+                "custom" => {
+                    let dir = Dir::new();
+                    dir.read_custom_repo().await?;
                 }
-            }
-
-        }
+                _ => mkproj_repo_list().await?,
+            },
+        },
         CLI::Compile => {
             let compiler = Compiler::from_file().await?;
             compiler.compile().await?;
@@ -157,15 +181,15 @@ async fn main() -> Result<()>{
     Ok(())
 }
 
-async fn mkproj_repo_list() -> Result<()>{
+async fn mkproj_repo_list() -> Result<()> {
     alert().await;
     repo_display().await?;
     Ok(())
 }
 
-async fn alert(){
-    match update_alert().await{
+async fn alert() {
+    match update_alert().await {
         Some(msg) => cprint!(Color::Red, "{}", msg),
-        None => ()
+        None => (),
     }
 }

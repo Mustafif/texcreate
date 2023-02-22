@@ -5,7 +5,7 @@ use tokio::process::Command;
 const LINK: &str = "https://github.com/MKProj/texcgen.git";
 
 #[derive(StructOpt)]
-pub enum Commands{
+pub enum Commands {
     #[structopt(about = "Create a new TexcGen Project.")]
     New,
     #[structopt(about = "Initialize Output Directory Structure")]
@@ -27,21 +27,13 @@ pub enum Commands{
     },
 }
 
-impl ToString for Commands{
+impl ToString for Commands {
     fn to_string(&self) -> String {
-        match self{
-            Commands::Init => {
-                "init".to_string()
-            }
-            Commands::Gen { .. } => {
-                "gen".to_string()
-            }
-            Commands::GenAll { .. } => {
-                "gen-all".to_string()
-            }
-            Commands::Save { .. } => {
-                "save".to_string()
-            }
+        match self {
+            Commands::Init => "init".to_string(),
+            Commands::Gen { .. } => "gen".to_string(),
+            Commands::GenAll { .. } => "gen-all".to_string(),
+            Commands::Save { .. } => "save".to_string(),
             _ => {
                 unimplemented!("This command is unimplemented")
             }
@@ -49,31 +41,30 @@ impl ToString for Commands{
     }
 }
 
-impl Commands{
+impl Commands {
     pub async fn run_command(&self) {
-        match self{
+        match self {
             Commands::New => {
-                let _ = git2::Repository::clone(LINK, PathBuf::from(".")).expect("Couldn't clone repository");
+                let _ = git2::Repository::clone(LINK, PathBuf::from("."))
+                    .expect("Couldn't clone repository");
             }
             _ => {
                 let _ = Command::new("cargo")
-                .args(&self.arguments())
-                .spawn()
-                .unwrap();
+                    .args(&self.arguments())
+                    .spawn()
+                    .unwrap();
             }
         }
     }
-    fn arguments(&self) -> Vec<String>{
+    fn arguments(&self) -> Vec<String> {
         let mut vec = Vec::new();
         vec.push("run".to_string());
         vec.push("--".to_string());
-        match &self{
+        match &self {
             Commands::New => {
                 unimplemented!("not implemented for new")
             }
-            Commands::Init => {
-                vec.push("init".to_string())
-            }
+            Commands::Init => vec.push("init".to_string()),
             Commands::Gen { level } => {
                 let level = level.unwrap_or(1);
                 vec.push("gen".to_string());
@@ -95,4 +86,3 @@ impl Commands{
         vec
     }
 }
-
