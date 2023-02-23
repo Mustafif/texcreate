@@ -99,6 +99,6 @@ pub async fn update_alert() -> Option<String> {
                 None
             }
         }
-        None => return None,
+        None => None,
     }
 }

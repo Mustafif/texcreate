@@ -133,7 +133,7 @@ impl Config {
         let dir = Dir::new();
         let template = dir.search(&self.template(), &self.repo()).await?;
         template.change_metadata(self.metadata.clone());
-        let main_path = main_path.join(&format!("{}.tex", self.name()));
+        let main_path = main_path.join(format!("{}.tex", self.name()));
         let incl_path = incl_path.join("structure.tex");
         let str_path = PathBuf::from("include").join("structure");
         let input = Input::new(str_path, Some(Level::Meta));
@@ -227,8 +227,8 @@ impl Compiler {
             .expect("Couldn't compile LaTeX document");
         // remove aux and log files
         let out = PathBuf::from("out");
-        let aux = out.join(&format!("{}.aux", &self.proj_name));
-        let log = out.join(&format!("{}.log", &self.proj_name));
+        let aux = out.join(format!("{}.aux", &self.proj_name));
+        let log = out.join(format!("{}.log", &self.proj_name));
         remove_file(aux).await?;
         remove_file(log).await?;
         println!("The project {} successfully compiled!", &self.proj_name);

@@ -111,8 +111,7 @@ pub async fn read_repo(n: u64) -> Repo {
     let resp = client.get(&repo_link(n)).send().await.unwrap();
     let bytes = resp.bytes().await.unwrap();
     let s = String::from_utf8(bytes.to_vec()).unwrap();
-    let repo = Repo::from_string(&s);
-    repo
+    Repo::from_string(&s)
 }
 // to ensure to display latest mkproj templates as `<option></option>`
 pub async fn template_html_options() -> String {
