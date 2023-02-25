@@ -1,4 +1,4 @@
-packages = []
+packages = ["listings"]
 
 [project]
 proj_name = "Project"
@@ -6,10 +6,10 @@ template = "basic"
 repo = "mkproj"
 
 [metadata]
-author = "author"
-date = "date"
-title = "title"
+author = "Mustafif Khan"
+date = "2022-2023"
+title = "The Basic Template"
 fontsize = 11
-papersize = "letterpaper"
+papersize = "a4paper"
 doc_class = "article"
 maketitle = true

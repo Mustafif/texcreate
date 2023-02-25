@@ -133,3 +133,10 @@ name.pdf
 - Fixed breaking in `3.0.0-beta.5`
 - Fixed logging in `web` command 
 - Added `papersize` option to `WebConfig` because of update to `texcore`
+
+## Changes in Beta 7 
+- Optimizations towards the `zip` & `build` commands 
+- Refactored with `clippy` suggestions 
+- Added `InvalidRepo` error variant 
+- Fixed `build` command with not adding the `packages` field 
+- Fixed `zip` command with not changing metadata and adding the `packages` field

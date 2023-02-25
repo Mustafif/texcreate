@@ -1,0 +1,30 @@
+[book]
+authors = ["Mustafif Khan"]
+language = "en"
+multilingual = false
+src = "src"
+title = "Getting Started with TexCreate!"
+
+[output.html]
+default-theme = "ayu"
+preferred-dark-theme = "ayu"
+curly-quotes = true
+mathjax-support = false
+copy-fonts = true
+no-section-label = true
+git-repository-url = "https://github.com/MKProj/texcreate"
+git-repository-icon = "fa-github"
+
+[output.html.print]
+enable = true    # include support for printable output
+page-break = true # insert page-break after each chapter
+
+[output.pdf]
+theme = "navy"
+header-template = "<h3 style='font-size:8px; margin-left: 48%' class='title'></h3>"
+footer-template = "<p style='font-size:10px; margin-left: 48%'>Page <span class='pageNumber'></span>"
+prefer-css-page-size = true
+display-header-footer = true
+
+[output.pdf-outline]
+like-wkhtmltopdf = true

@@ -188,5 +188,7 @@ async fn mkproj_repo_list() -> Result<()> {
 }
 
 async fn alert() {
-    if let Some(msg) = update_alert().await { cprint!(Color::Red, "{}", msg) }
+    if let Some(msg) = update_alert().await {
+        cprint!(Color::Red, "{}", msg)
+    }
 }
