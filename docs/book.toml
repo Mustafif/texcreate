@@ -19,12 +19,3 @@ git-repository-icon = "fa-github"
 enable = true    # include support for printable output
 page-break = true # insert page-break after each chapter
 
-[output.pdf]
-theme = "navy"
-header-template = "<h3 style='font-size:8px; margin-left: 48%' class='title'></h3>"
-footer-template = "<p style='font-size:10px; margin-left: 48%'>Page <span class='pageNumber'></span>"
-prefer-css-page-size = true
-display-header-footer = true
-
-[output.pdf-outline]
-like-wkhtmltopdf = true
