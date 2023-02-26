@@ -4,7 +4,7 @@ use crate::error::*;
 use reqwest::Client;
 use termcolor::Color;
 use tokio::spawn;
-// The web address of texcreate to send requests to 
+// The web address of texcreate to send requests to
 const ADDRESS: &str = "https://texcreate.mkproj.com";
 /// Returns the github link to download a template file given a version number and template name
 pub fn gh_link(num: u64, name: &str) -> String {
@@ -64,6 +64,7 @@ pub async fn repo_update() -> Result<()> {
         // push the name of the template and task to `tasks`
         tasks.push((n, task))
     }
+
     // iterate through `tasks` so we can save each template to the `mkproj` directory
     for (name, handle) in tasks {
         // get the template's bytes by joining the handle
@@ -105,10 +106,10 @@ pub async fn update_alert() -> Option<String> {
                 // The goal of our message is to look like the following:
                 // For example if the latest version was v2:
                 /*
-                    ----------------------------------
-                    | Update to the latest repo: v2! |
-                    ----------------------------------
-                 */
+                   ----------------------------------
+                   | Update to the latest repo: v2! |
+                   ----------------------------------
+                */
 
                 let mut vec = Vec::new();
 

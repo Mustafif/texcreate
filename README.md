@@ -1,5 +1,5 @@
 # TexCreate by Mustafif Khan
-## Version 3.0.0-beta.7
+## Version 3.0.0-beta.8
 
 > This project is under the [MIT License](LICENSE)
 
@@ -21,7 +21,7 @@ allows it to be easily downloaded in the latest releases and TexCreate is able t
 ### Installing
 
 ```bash
-$ cargo install texcreate --version 3.0.0.beta.7
+$ cargo install texcreate --version 3.0.0.beta.8
 ```
 
 The new thing with TexCreate is that templates are locally stored in the directory `$HOME/.texcreate` where the structure 
@@ -142,3 +142,6 @@ name.pdf
 - Fixed `zip` command with not changing metadata and adding the `packages` field
 - Added global `DIR` variable to `dir` module to allow for lazily evaluated directory paths
 - Added detailed comments to whole project
+
+## Changes in Beta 8 
+- Added `mode` & `clean` fields in the `Compiler` struct 

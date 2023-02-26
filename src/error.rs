@@ -16,7 +16,7 @@ pub enum Error {
     // This will occur if the user puts in a repo that isn't `mkproj` or `custom`
     #[error("The repo `{0}` is invalid, only `mkproj` or `custom` is allowed!")]
     InvalidRepo(String),
-    // This will handle any IO Error 
+    // This will handle any IO Error
     #[error("IO Error")]
     IOError(#[from] io::Error),
 }

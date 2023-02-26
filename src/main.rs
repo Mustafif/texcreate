@@ -48,7 +48,7 @@ enum CLI {
     },
     #[structopt(about = "Updates to the latest MKProject templates.")]
     Update,
-    #[structopt(about = "Shows all available MKProject templates.")]
+    #[structopt(about = "Shows all available templates (default MKProj).")]
     List {
         #[structopt(short, long)]
         repo: Option<String>,

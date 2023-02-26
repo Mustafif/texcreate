@@ -1,0 +1,22 @@
+name: Deploy to Gh-Pages
+
+on:
+  push:
+    branches: [main]
+jobs:
+  deploy-to-gh-pages:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - uses: actions-rs/toolchain@v1
+        with:
+          toolchain: stable
+      - run: cargo install mdbook
+      - run: cd docs && mdbook build
+      - run: touch docs/book/.nojekyll
+      - name: Commit book to Gh-Pages
+        uses: JamesIves/github-pages-deploy-action@3.7.1
+        with:
+          GITHUB_TOKEN: ${{secrets.GITHUB_TOKEN}}
+          BRANCH: gh-pages
+          FOLDER: docs/book

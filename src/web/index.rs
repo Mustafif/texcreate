@@ -1,4 +1,4 @@
-// the base template for index.html for the web server 
+// the base template for index.html for the web server
 pub const INDEX: &str = r#"<!DOCTYPE html>
 <html>
 <title>TexCreate v3 Web</title>

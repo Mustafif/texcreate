@@ -1,3 +1,4 @@
+![Logo](logo.png)
 # What is TexCreate?
 
 TexCreate is a LaTeX project creator developed by Mustafif Khan in 2021 and is actively being maintained as my main portfolio project. The project started from my laziness; I found setting up LaTeX documents annoying whenever I had something new to do (I use LaTeX over word processors). I created a program to write a document for me using some prebuilt templates embedded in the program. When I wrote TexCreate, I found it very useful, and it saved me a lot of time, such as when I used it for a Physics tutorial with the Lachaise template.

@@ -1,6 +1,6 @@
 # Installing TexCreate
 
-> At the time of writing, TexCreate v3 is currently in beta 7
+> At the time of writing, TexCreate v3 is currently in beta 8
 
 ## Install Rust 
 
@@ -10,10 +10,10 @@ will allow you to install Rust for your particular operating system.
 
 ## Install TexCreate 
 
-To install TexCreate, we will need to use `cargo` and install the latest beta (beta 7) of TexCreate version 3: 
+To install TexCreate, we will need to use `cargo` and install the latest beta (beta 8) of TexCreate version 3: 
 
 ```bash
-$ cargo install texcreate --version 3.0.0-beta.7
+$ cargo install texcreate --version 3.0.0-beta.8
 ```
 
 With TexCreate installed, it is also recommended to have a LaTeX compiler installed as well, you may install 

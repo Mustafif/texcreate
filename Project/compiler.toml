@@ -1,0 +1,5 @@
+compiler = "xelatex"
+proj_name = "Project"
+flags = ["-interaction=nonstopmode"]
+clean = true
+mode = "Spawn"

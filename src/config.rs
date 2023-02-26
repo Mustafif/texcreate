@@ -4,7 +4,7 @@ use crate::error::{Error, Result};
 use serde::{Deserialize, Serialize};
 use std::io::{stdin, Write};
 use std::path::PathBuf;
-use termcolor::Color::Cyan;
+use termcolor::Color::{Cyan, Green};
 use texcore::{Any, Element, Input, Level, Metadata, Package};
 use tokio::fs::{create_dir, read_to_string, remove_file, File};
 use tokio::io::AsyncWriteExt;
@@ -43,7 +43,18 @@ pub struct Compiler {
     proj_name: String,
     // Any extra flags to use when compiling
     flags: Vec<String>,
+    // whether to clean the out directory from `aux` and `log` files
+    clean: bool,
+    // whether to spawn or output the job
+    mode: CompilerMode,
 }
+
+#[derive(Debug, Copy, Clone, Deserialize, Serialize)]
+pub enum CompilerMode{
+    Spawn,
+    Output,
+}
+
 // The default for Project, used when the user would like to use default settings
 impl Default for Project {
     fn default() -> Self {
@@ -289,6 +300,8 @@ impl Compiler {
             compiler: "pdflatex".to_string(),
             proj_name: proj_name.to_string(),
             flags: vec![],
+            clean: true,
+            mode: CompilerMode::Output,
         }
     }
     /// Creates a `Compiler` by reading `compiler.toml`
@@ -311,6 +324,29 @@ impl Compiler {
         file.write_all(s.as_bytes()).await?;
         Ok(())
     }
+
+    async fn output(&self){
+        let _ = Command::new(&self.compiler)
+            .arg("-output-directory=out")
+            .args(&self.flags)
+            .arg(&self.proj_name)
+            .output()
+            .await
+            .expect("Couldn't compile LaTeX document");
+    }
+
+    async fn spawn(&self){
+        let _ = Command::new(&self.compiler)
+            .arg("-output-directory=out")
+            .args(&self.flags)
+            .arg(&self.proj_name)
+            .spawn()
+            .expect("Compiler failed to start")
+            .wait()
+            .await
+            .expect("Couldn't compile LaTeX document");
+    }
+
     /// Compiles a TexCreate project
     ///
     /// The following command is used:
@@ -320,22 +356,21 @@ impl Compiler {
     /// ```
     pub async fn compile(&self) -> Result<()> {
         // run the compile command
-        let _ = Command::new(&self.compiler)
-            .arg("-output-directory=out")
-            .args(&self.flags)
-            .arg(&self.proj_name)
-            .output()
-            .await
-            .expect("Couldn't compile LaTeX document");
-        // clean the out directory by removing the aux and log files
-        // should exist if the project compiled successfully
-        let out = PathBuf::from("out");
-        let aux = out.join(format!("{}.aux", &self.proj_name));
-        let log = out.join(format!("{}.log", &self.proj_name));
-        remove_file(aux).await?;
-        remove_file(log).await?;
+        match self.mode{
+            CompilerMode::Spawn => self.spawn().await,
+            CompilerMode::Output => self.output().await
+        }
+        if self.clean{
+            // clean the out directory by removing the aux and log files
+            // should exist if the project compiled successfully
+            let out = PathBuf::from("out");
+            let aux = out.join(format!("{}.aux", &self.proj_name));
+            let log = out.join(format!("{}.log", &self.proj_name));
+            remove_file(aux).await?;
+            remove_file(log).await?;
+        }
         // if nothing panicked then we have a successful compile
-        println!("The project {} successfully compiled!", &self.proj_name);
+        cprint!(Green, "The project `{}` successfully compiled!", &self.proj_name);
         Ok(())
     }
 }
