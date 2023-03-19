@@ -1,6 +1,5 @@
 mod index;
 
-use crate::config::Compiler;
 use crate::error::Result;
 use crate::repo::{get_latest_num, gh_link, repo_link};
 use reqwest::Client;
@@ -16,7 +15,7 @@ use tokio::io::AsyncWriteExt;
 use tokio::spawn;
 use zip::write::FileOptions;
 use zip::{CompressionMethod, ZipWriter};
-
+use texc_v3_compiler_conf::Compiler;
 /// A web version of the config that is simplified and only
 /// uses mkproj templates
 #[derive(Debug, Clone, FromForm)]
@@ -85,12 +84,12 @@ impl WebConfig {
         let main_path = format!("{}.tex", &self.proj_name);
         let str_path = PathBuf::from("include").join("structure.tex");
         // get template and change metadata
-        let template = self.get_template().await;
+        let mut template = self.get_template().await;
         template.change_metadata(self.metadata());
         // create input for template
-        let input = Input::new(str_path.clone(), Some(Level::Meta));
+        let input = Input::new(str_path.clone(), Level::Meta);
         // split template into main and structure latex strings
-        let (main_data, str_data) = template.to_latex_split_string(input);
+        let (main_data, str_data) = template.to_latex_split_string(input).await;
         // create compiler
         let compiler = Compiler::new(&self.proj_name);
         // convert compiler to string

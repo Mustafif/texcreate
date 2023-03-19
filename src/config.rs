@@ -12,6 +12,7 @@ use tokio::process::Command;
 use toml::{from_str, to_string_pretty};
 use zip::write::FileOptions;
 use zip::{CompressionMethod, ZipWriter};
+use texc_v3_compiler_conf::*;
 
 /// The configuration used to create TexCreate projects
 #[derive(Debug, Clone, Deserialize, Serialize)]
@@ -24,43 +25,6 @@ pub struct Config {
     packages: Vec<String>,
 }
 
-/// The Project section provides the user to declare the following:
-/// - Project Name (Used for main directory, main source file, and `compiler.toml`)
-/// - The Template Name (Used to build the project using a particular template)
-/// - The Repo Name (Used to search which repo to find the template)
-#[derive(Debug, Clone, Deserialize, Serialize)]
-pub struct Project {
-    proj_name: String,
-    template: String,
-    repo: String,
-}
-/// The Compiler configuration allows TexCreate to compile the project
-#[derive(Debug, Clone, Deserialize, Serialize)]
-pub struct Compiler {
-    // The LaTeX compiler to use, default: pdflatex
-    compiler: String,
-    // The project name
-    proj_name: String,
-    // Any extra flags to use when compiling
-    flags: Vec<String>,
-    // whether to clean the out directory from `aux` and `log` files
-    clean: bool,
-    // whether to spawn or output the job
-    mode: CompilerMode,
-}
-
-#[derive(Debug, Copy, Clone, Deserialize, Serialize)]
-pub enum CompilerMode{
-    Spawn,
-    Output,
-}
-
-// The default for Project, used when the user would like to use default settings
-impl Default for Project {
-    fn default() -> Self {
-        Project::new("Project", "basic", "mkproj")
-    }
-}
 // The default for Config, used when the user would like to use default settings
 impl Default for Config {
     fn default() -> Self {
@@ -73,6 +37,25 @@ impl Default for Config {
         }
     }
 }
+
+/// The Project section provides the user to declare the following:
+/// - Project Name (Used for main directory, main source file, and `compiler.toml`)
+/// - The Template Name (Used to build the project using a particular template)
+/// - The Repo Name (Used to search which repo to find the template)
+#[derive(Debug, Clone, Deserialize, Serialize)]
+pub struct Project {
+    proj_name: String,
+    template: String,
+    repo: String,
+}
+
+// The default for Project, used when the user would like to use default settings
+impl Default for Project {
+    fn default() -> Self {
+        Project::new("Project", "basic", "mkproj")
+    }
+}
+
 
 impl Project {
     /// Creates a new project using a project, template and repo name
@@ -205,11 +188,11 @@ impl Config {
         // Get the main and include directory path
         let (main_path, incl_path, _) = self.project.paths();
         // Get the template by using the template and repo names
-        let template = DIR.search(&self.template(), &self.repo()).await?;
+        let mut template = DIR.search(&self.template(), &self.repo()).await?;
         // Change the template's metadata to config's
         template.change_metadata(self.metadata.clone());
         // Push the array of packages from config
-        template.push_element_array(self.packages());
+        template.push_element_array(self.packages()).await;
         // Path for the main source file
         let main_path = main_path.join(format!("{}.tex", self.name()));
         // Path to write the structure file
@@ -217,9 +200,9 @@ impl Config {
         // Path for the source file's `\input{}` entry
         let str_path = PathBuf::from("include").join("structure");
         // Create a new input for our source file
-        let input = Input::new(str_path, Some(Level::Meta));
+        let input = Input::new(str_path, Level::Meta);
         // Write the tex files using the main and include path, as well as using `input`
-        template.write_tex_files(main_path, incl_path, input)?;
+        template.write_tex_files(main_path, incl_path, input).await?;
         Ok(())
     }
     /// Zips a TexCreate Project
@@ -242,16 +225,15 @@ impl Config {
         let main_path = format!("{}.tex", &self.name());
         let str_path = PathBuf::from("include").join("structure.tex");
         // get the template by using the template and repo name
-        let template = DIR.search(&self.template(), &self.repo()).await?;
+        let mut template = DIR.search(&self.template(), &self.repo()).await?;
         // change the metadata to the config's
         template.change_metadata(self.metadata.clone());
         // Push the array of packages from the config
-        template.push_element_array(self.packages());
+        template.push_element_array(self.packages()).await;
         // Create an input by cloning `str_path` since it's just `include/structure.tex`
-        let input = Input::new(str_path.clone(), Some(Level::Meta));
+        let input = Input::new(str_path.clone(), Level::Meta);
         // get the split latex strings using input
-        // we do not use `write_split()` because we need to write using the zip writer
-        let (main_data, str_data) = template.to_latex_split_string(input);
+        let (main_data, str_data) = template.to_latex_split_string(input).await;
         // create a new compiler config using the project name
         let compiler = Compiler::new(&self.name());
         // get the compiler toml string
@@ -293,84 +275,4 @@ impl Config {
     }
 }
 
-impl Compiler {
-    /// Create a new compiler configuration given a project name, and has default compiler, `pdflatex`
-    pub fn new(proj_name: &str) -> Self {
-        Self {
-            compiler: "pdflatex".to_string(),
-            proj_name: proj_name.to_string(),
-            flags: vec![],
-            clean: true,
-            mode: CompilerMode::Output,
-        }
-    }
-    /// Creates a `Compiler` by reading `compiler.toml`
-    pub async fn from_file() -> Result<Self> {
-        let s = read_to_string("compiler.toml").await?;
-        Ok(from_str(&s).unwrap())
-    }
-    /// Turns `Compiler` into a TOML string
-    pub fn to_string(&self) -> String {
-        to_string_pretty(&self).unwrap()
-    }
-    /// Creates a new `compiler.toml` file.
-    ///
-    /// Since `Compiler` contains the field, `proj_name`, the file will be created
-    /// in the correct path.
-    pub async fn create_file(&self) -> Result<()> {
-        let s = self.to_string();
-        let path = PathBuf::from(&self.proj_name).join("compiler.toml");
-        let mut file = File::create(path).await?;
-        file.write_all(s.as_bytes()).await?;
-        Ok(())
-    }
 
-    async fn output(&self){
-        let _ = Command::new(&self.compiler)
-            .arg("-output-directory=out")
-            .args(&self.flags)
-            .arg(&self.proj_name)
-            .output()
-            .await
-            .expect("Couldn't compile LaTeX document");
-    }
-
-    async fn spawn(&self){
-        let _ = Command::new(&self.compiler)
-            .arg("-output-directory=out")
-            .args(&self.flags)
-            .arg(&self.proj_name)
-            .spawn()
-            .expect("Compiler failed to start")
-            .wait()
-            .await
-            .expect("Couldn't compile LaTeX document");
-    }
-
-    /// Compiles a TexCreate project
-    ///
-    /// The following command is used:
-    /// ```bash
-    /// # using pdflatex as example compiler
-    /// $ pdflatex -output-directory=out <flags> `proj_name`.tex
-    /// ```
-    pub async fn compile(&self) -> Result<()> {
-        // run the compile command
-        match self.mode{
-            CompilerMode::Spawn => self.spawn().await,
-            CompilerMode::Output => self.output().await
-        }
-        if self.clean{
-            // clean the out directory by removing the aux and log files
-            // should exist if the project compiled successfully
-            let out = PathBuf::from("out");
-            let aux = out.join(format!("{}.aux", &self.proj_name));
-            let log = out.join(format!("{}.log", &self.proj_name));
-            remove_file(aux).await?;
-            remove_file(log).await?;
-        }
-        // if nothing panicked then we have a successful compile
-        cprint!(Green, "The project `{}` successfully compiled!", &self.proj_name);
-        Ok(())
-    }
-}

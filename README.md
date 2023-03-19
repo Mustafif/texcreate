@@ -1,5 +1,9 @@
 # TexCreate by Mustafif Khan
-## Version 3.0.0-beta.8
+
+![Crates.io](https://img.shields.io/crates/v/texcreate)
+![Lines of code](https://img.shields.io/tokei/lines/github/MKProj/texcreate)
+![Crates.io](https://img.shields.io/crates/d/texcreate)
+![GitHub top language](https://img.shields.io/github/languages/top/MKProj/texcreate)
 
 > This project is under the [MIT License](LICENSE)
 

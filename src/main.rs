@@ -5,7 +5,8 @@ mod repo;
 mod texc_gen;
 mod web;
 
-use crate::config::{Compiler, Config};
+use crate::config::Config;
+use texc_v3_compiler_conf::Compiler;
 use crate::texc_gen::Commands;
 use dir::Dir;
 use error::*;
