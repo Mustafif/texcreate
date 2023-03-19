@@ -18,5 +18,5 @@ pub enum Error {
     InvalidRepo(String),
     // This will handle any IO Error
     #[error("IO Error")]
-    IOError(#[from] io::Error),
+    IO(#[from] io::Error),
 }

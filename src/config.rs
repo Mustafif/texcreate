@@ -4,15 +4,13 @@ use crate::error::{Error, Result};
 use serde::{Deserialize, Serialize};
 use std::io::{stdin, Write};
 use std::path::PathBuf;
-use termcolor::Color::{Cyan, Green};
+use termcolor::Color::Cyan;
+use texc_v3_compiler_conf::*;
 use texcore::{Any, Element, Input, Level, Metadata, Package};
-use tokio::fs::{create_dir, read_to_string, remove_file, File};
-use tokio::io::AsyncWriteExt;
-use tokio::process::Command;
+use tokio::fs::{create_dir, read_to_string};
 use toml::{from_str, to_string_pretty};
 use zip::write::FileOptions;
 use zip::{CompressionMethod, ZipWriter};
-use texc_v3_compiler_conf::*;
 
 /// The configuration used to create TexCreate projects
 #[derive(Debug, Clone, Deserialize, Serialize)]
@@ -55,7 +53,6 @@ impl Default for Project {
         Project::new("Project", "basic", "mkproj")
     }
 }
-
 
 impl Project {
     /// Creates a new project using a project, template and repo name
@@ -202,7 +199,9 @@ impl Config {
         // Create a new input for our source file
         let input = Input::new(str_path, Level::Meta);
         // Write the tex files using the main and include path, as well as using `input`
-        template.write_tex_files(main_path, incl_path, input).await?;
+        template
+            .write_tex_files(main_path, incl_path, input)
+            .await?;
         Ok(())
     }
     /// Zips a TexCreate Project
@@ -274,5 +273,3 @@ impl Config {
         Ok(zip_name)
     }
 }
-
-

@@ -3,10 +3,8 @@ mod dir;
 mod error;
 mod repo;
 mod texc_gen;
-mod web;
 
 use crate::config::Config;
-use texc_v3_compiler_conf::Compiler;
 use crate::texc_gen::Commands;
 use dir::Dir;
 use error::*;
@@ -15,9 +13,11 @@ use std::io::stdin;
 use std::path::PathBuf;
 use structopt::StructOpt;
 use termcolor::Color;
+use texc_v3_compiler_conf::Compiler;
 use tokio::fs::{remove_file, File};
 use tokio::io::AsyncWriteExt;
 use tokio::spawn;
+use texc_v3_web::web;
 
 #[macro_export]
 macro_rules! cprint {
@@ -32,7 +32,7 @@ macro_rules! cprint {
 
 #[derive(StructOpt)]
 #[structopt(name = "TexCreate", about = "A LaTeX Project Creator by Mustafif Khan")]
-enum CLI {
+enum Cli {
     #[structopt(about = "Initialize TexCreate.")]
     Init,
     #[structopt(about = "Create a new project's config file.")]
@@ -66,9 +66,9 @@ enum CLI {
 
 #[tokio::main]
 async fn main() -> Result<()> {
-    let cli = CLI::from_args();
+    let cli = Cli::from_args();
     match cli {
-        CLI::Init => {
+        Cli::Init => {
             // initializes the texcreate directory
             // and gets the latest repo
             let dir = Dir::new();
@@ -96,7 +96,7 @@ async fn main() -> Result<()> {
                 Some(r) => r?,
             }
         }
-        CLI::New => {
+        Cli::New => {
             alert().await;
             // for the moment creates default config
             let config = Config::new()?;
@@ -119,7 +119,7 @@ async fn main() -> Result<()> {
             file.write_all(s.as_bytes()).await?;
             cprint!(Color::Green, "Successfully created `{}`", file_name);
         }
-        CLI::Build { file } => {
+        Cli::Build { file } => {
             alert().await;
             // read config
             let path = file.unwrap_or(PathBuf::from("texcreate.toml"));
@@ -135,7 +135,7 @@ async fn main() -> Result<()> {
             }
             cprint!(Color::Green, "Successfully created `{}`", name);
         }
-        CLI::Zip { file } => {
+        Cli::Zip { file } => {
             alert().await;
             // read config
             let path = file.unwrap_or(PathBuf::from("texcreate.toml"));
@@ -150,11 +150,11 @@ async fn main() -> Result<()> {
             };
             cprint!(Color::Green, "Successfully created `{}`", name);
         }
-        CLI::Update => {
+        Cli::Update => {
             // updates to the latest repo
             repo_update().await?;
         }
-        CLI::List { repo } => match repo {
+        Cli::List { repo } => match repo {
             None => mkproj_repo_list().await?,
             Some(repo) => match repo.as_str() {
                 "custom" => {
@@ -164,18 +164,18 @@ async fn main() -> Result<()> {
                 _ => mkproj_repo_list().await?,
             },
         },
-        CLI::Compile => {
+        Cli::Compile => {
             let compiler = Compiler::from_file().await?;
             compiler.compile().await?;
         }
-        CLI::Texcgen(c) => {
+        Cli::Texcgen(c) => {
             c.run_command().await;
         }
-        CLI::Open => {
+        Cli::Open => {
             open::that("https://texcreate.mkproj.com")?;
         }
-        CLI::Web => {
-            let _ = web::web().launch().await.unwrap();
+        Cli::Web => {
+            let _ = web().launch().await.unwrap();
             remove_file("index.html").await?;
         }
     }

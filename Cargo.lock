@@ -1842,6 +1842,21 @@ dependencies = [
 ]
 
 [[package]]
+name = "texc_v3_web"
+version = "0.1.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "e9c7d17addda4eab6d956cff62598164eb6d73b311e6b6e8926324a4a3f13498"
+dependencies = [
+ "reqwest",
+ "rocket",
+ "texc_v3_compiler_conf",
+ "texcore",
+ "texcreate_repo",
+ "tokio",
+ "zip",
+]
+
+[[package]]
 name = "texcore"
 version = "0.6.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -1867,6 +1882,7 @@ dependencies = [
  "structopt",
  "termcolor",
  "texc_v3_compiler_conf",
+ "texc_v3_web",
  "texcore",
  "texcreate_repo",
  "thiserror",

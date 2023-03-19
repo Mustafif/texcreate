@@ -19,13 +19,16 @@ an opensource template generator `texcgen` (note: TexCreate templates are built 
 is done in a web service `texcweb`. The ability to put a template into a JSON file using the handy `texcore` library I developed 
 allows it to be easily downloaded in the latest releases and TexCreate is able to know about these updates because of `texcweb`. 
 
+> If you are updating from an earlier beta to __Beta 9__, please make sure to update to repo v2. 
+> Since this beta uses TexCore `0.6.0` instead of `0.4.17`, earlier templates are broken. To update to the latest 
+> template use the command `texcreate update`. 
 
 ## How to get started?
 
 ### Installing
 
 ```bash
-$ cargo install texcreate --version 3.0.0.beta.8
+$ cargo install texcreate --version 3.0.0.beta.9
 ```
 
 The new thing with TexCreate is that templates are locally stored in the directory `$HOME/.texcreate` where the structure 
@@ -149,3 +152,9 @@ name.pdf
 
 ## Changes in Beta 8 
 - Added `mode` & `clean` fields in the `Compiler` struct 
+
+## Changes in Beta 9 
+- Updated to `texcore 0.6.0`
+  - Introduces `write_tex_files()` that is asynchronous and will write files in parallel 
+- Replaced `Compiler` & `CompilerMode` with `texc_v3_compiler_conf::*`
+- Replaced `web` module with `texc_v3_web`
