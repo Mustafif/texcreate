@@ -18,4 +18,3 @@ git-repository-icon = "fa-github"
 [output.html.print]
 enable = true    # include support for printable output
 page-break = true # insert page-break after each chapter
-

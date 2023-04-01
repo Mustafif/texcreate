@@ -1,6 +1,8 @@
 use std::path::PathBuf;
 use structopt::StructOpt;
 use tokio::process::Command;
+use crate::cprint;
+use termcolor::Color::Green;
 // the gh link to clone the `texcgen` project
 const LINK: &str = "https://github.com/MKProj/texcgen.git";
 
@@ -12,6 +14,8 @@ pub enum Commands {
     New,
     #[structopt(about = "Initialize Output Directory Structure")]
     Init,
+    #[structopt(about = "Refreshes `src/template.rs` using the default template.")]
+    Refresh,
     #[structopt(about = "Generate template")]
     Gen {
         #[structopt(short, long)]
@@ -33,6 +37,7 @@ impl ToString for Commands {
     fn to_string(&self) -> String {
         match self {
             Commands::Init => "init".to_string(),
+            Commands::Refresh => "refresh".to_string(), 
             Commands::Gen { .. } => "gen".to_string(),
             Commands::GenAll { .. } => "gen-all".to_string(),
             Commands::Save { .. } => "save".to_string(),
@@ -49,8 +54,9 @@ impl Commands {
         match self {
             // the new command will clone the repository in the root directory it's in
             Commands::New => {
-                let _ = git2::Repository::clone(LINK, PathBuf::from("."))
+                let _ = git2::Repository::clone(LINK, PathBuf::from("texcgen"))
                     .expect("Couldn't clone repository");
+                cprint!(Green, "Successfully created TexCGen!");
             }
             // any other command will be ran, using the `args()` method to iterate through an array of arguments
             _ => {
