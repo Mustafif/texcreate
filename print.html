@@ -150,20 +150,31 @@
                     <main>
                         <p><img src="logo.png" alt="Logo" /></p>
 <h1 id="what-is-texcreate"><a class="header" href="#what-is-texcreate">What is TexCreate?</a></h1>
-<p>TexCreate is a LaTeX project creator developed by Mustafif Khan in 2021 and is actively being maintained as my main portfolio project. The project started from my laziness; I found setting up LaTeX documents annoying whenever I had something new to do (I use LaTeX over word processors). I created a program to write a document for me using some prebuilt templates embedded in the program. When I wrote TexCreate, I found it very useful, and it saved me a lot of time, such as when I used it for a Physics tutorial with the Lachaise template.</p>
-<p>When TexCreate was first written, much of the code was written using Github copilot when I got my technical preview. However, as the versions came out, I found myself using an AI less and less, with TexCreate v3 with the whole project totaling around 4000+ lines of code only having one thing written by AI,<code>cprint!()</code>.</p>
-<p>This project is for anyone who wants to save time creating LaTeX documents! Let’s install the application and begin creating!!!!</p>
-<div style="break-before: page; page-break-before: always;"></div><h1 id="installing-texcreate"><a class="header" href="#installing-texcreate">Installing TexCreate</a></h1>
+<p>TexCreate is a LaTeX project creator developed by myself, Mustafif Khan since 2021 and is actively being maintained as my main portfolio project. The project started from my laziness; I found setting up LaTeX documents annoying whenever I had something new to do (I use LaTeX over word processors). I created a program to write a document for me using some prebuilt templates embedded in the program. When I wrote TexCreate, I found it very useful, and it saved me a lot of time, such as when I used it for a Physics tutorial with the Lachaise template.</p>
+<p>TexCreate version 3 focuses on template modularity which in simple terms means that instead of the prebuilt templates 
+being hardcoded into the program, they are instead managed by releases with a web service. Every new major version 
+expands on the core idea of TexCreate as a LaTeX project creator that helps ease development, and with every new version 
+the codebase increasingly becomes a lot more complex. </p>
+<p>To get a good idea of how much the project has grown, consider the following dependency flow charts which show TexCreate 
+and related libraries/applications that work with it. </p>
+<p><img src="TexCreate_v1_v2.png" alt="TexCreate v1 &amp; 2" />
+<img src="TexCreate_v3.png" alt="TexCreate v3" /></p>
 <blockquote>
-<p>At the time of writing, TexCreate v3 is currently in beta 8</p>
+<p>To look at all related repositories for TexCreate v3, take a look at the <a href="https://github.com/MKProj/texc_v3_sources">texc_v3_sources</a> repo. </p>
 </blockquote>
+<div style="break-before: page; page-break-before: always;"></div><h1 id="installing-texcreate"><a class="header" href="#installing-texcreate">Installing TexCreate</a></h1>
 <h2 id="install-rust"><a class="header" href="#install-rust">Install Rust</a></h2>
-<p>To install TexCreate you will need the <code>cargo</code> package manager which means you will need to install 
+<p>To install TexCreate you will need the <code>cargo</code> package manager (on Debian <code>amd64</code> Linux systems you can use alternative method) which means you will need to install 
 <code>rust</code>. The recommended way of installation is using <code>rustup</code>, which can be found <a href="https://rustup.rs/">here</a> and 
 will allow you to install Rust for your particular operating system. </p>
 <h2 id="install-texcreate"><a class="header" href="#install-texcreate">Install TexCreate</a></h2>
-<p>To install TexCreate, we will need to use <code>cargo</code> and install the latest beta (beta 8) of TexCreate version 3: </p>
-<pre><code class="language-bash">$ cargo install texcreate --version 3.0.0-beta.8
+<h4 id="cargo-method"><a class="header" href="#cargo-method">Cargo Method</a></h4>
+<pre><code class="language-bash"># install via Cargo 
+$ cargo install texcreate
+</code></pre>
+<h4 id="debian-method"><a class="header" href="#debian-method">Debian Method</a></h4>
+<pre><code class="language-bash"># this method is only for Debian amd64 Linux systems
+$ curl --proto '=https' https://texcreate.mkproj.com/sh | sudo sh
 </code></pre>
 <p>With TexCreate installed, it is also recommended to have a LaTeX compiler installed as well, you may install 
 <code>texlive</code> with their install instructions found <a href="https://tug.org/texlive/doc/texlive-en/texlive-en.html#installation">here</a>. </p>

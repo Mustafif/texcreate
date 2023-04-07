@@ -148,16 +148,18 @@
                 <div id="content" class="content">
                     <main>
                         <h1 id="installing-texcreate"><a class="header" href="#installing-texcreate">Installing TexCreate</a></h1>
-<blockquote>
-<p>At the time of writing, TexCreate v3 is currently in beta 8</p>
-</blockquote>
 <h2 id="install-rust"><a class="header" href="#install-rust">Install Rust</a></h2>
-<p>To install TexCreate you will need the <code>cargo</code> package manager which means you will need to install 
+<p>To install TexCreate you will need the <code>cargo</code> package manager (on Debian <code>amd64</code> Linux systems you can use alternative method) which means you will need to install 
 <code>rust</code>. The recommended way of installation is using <code>rustup</code>, which can be found <a href="https://rustup.rs/">here</a> and 
 will allow you to install Rust for your particular operating system. </p>
 <h2 id="install-texcreate"><a class="header" href="#install-texcreate">Install TexCreate</a></h2>
-<p>To install TexCreate, we will need to use <code>cargo</code> and install the latest beta (beta 8) of TexCreate version 3: </p>
-<pre><code class="language-bash">$ cargo install texcreate --version 3.0.0-beta.8
+<h4 id="cargo-method"><a class="header" href="#cargo-method">Cargo Method</a></h4>
+<pre><code class="language-bash"># install via Cargo 
+$ cargo install texcreate
+</code></pre>
+<h4 id="debian-method"><a class="header" href="#debian-method">Debian Method</a></h4>
+<pre><code class="language-bash"># this method is only for Debian amd64 Linux systems
+$ curl --proto '=https' https://texcreate.mkproj.com/sh | sudo sh
 </code></pre>
 <p>With TexCreate installed, it is also recommended to have a LaTeX compiler installed as well, you may install 
 <code>texlive</code> with their install instructions found <a href="https://tug.org/texlive/doc/texlive-en/texlive-en.html#installation">here</a>. </p>
