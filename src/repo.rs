@@ -42,7 +42,7 @@ async fn get_latest_repo() -> Result<()> {
 /// Updates the mkprojects directory to the latest release
 pub async fn repo_update() -> Result<()> {
     // gets the latest repo in a separate thread
-    spawn(async move { get_latest_repo().await })
+    spawn(get_latest_repo() )
         .await
         .unwrap()?;
     // clear mkproj directory

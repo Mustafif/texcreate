@@ -12,7 +12,7 @@ documentation = "https://mkproj.github.io/texcreate/"
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
 [dependencies]
-dirs = "4.0.0"
+dirs = "5.0.0"
 reqwest = "0.11.14"
 structopt = "0.3.26"
 texcore = { version = "0.6.0", features = ["texcreate_template", "async"] }
@@ -25,7 +25,7 @@ termcolor = "1.2.0"
 walkdir = "2.3.2"
 zip = "0.6.4"
 git2 = "0.16.1"
-open = "3.2.0"
+open = "4.0.1"
 rocket = "0.5.0-rc.2"
 lazy_static = "1.4.0"
 texc_v3_compiler_conf = "0.1.0"

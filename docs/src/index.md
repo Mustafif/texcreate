@@ -1,9 +1,17 @@
 ![Logo](logo.png)
 # What is TexCreate?
 
-TexCreate is a LaTeX project creator developed by Mustafif Khan in 2021 and is actively being maintained as my main portfolio project. The project started from my laziness; I found setting up LaTeX documents annoying whenever I had something new to do (I use LaTeX over word processors). I created a program to write a document for me using some prebuilt templates embedded in the program. When I wrote TexCreate, I found it very useful, and it saved me a lot of time, such as when I used it for a Physics tutorial with the Lachaise template.
+TexCreate is a LaTeX project creator developed by myself, Mustafif Khan since 2021 and is actively being maintained as my main portfolio project. The project started from my laziness; I found setting up LaTeX documents annoying whenever I had something new to do (I use LaTeX over word processors). I created a program to write a document for me using some prebuilt templates embedded in the program. When I wrote TexCreate, I found it very useful, and it saved me a lot of time, such as when I used it for a Physics tutorial with the Lachaise template.
 
-When TexCreate was first written, much of the code was written using Github copilot when I got my technical preview. However, as the versions came out, I found myself using an AI less and less, with TexCreate v3 with the whole project totaling around 4000+ lines of code only having one thing written by AI,`cprint!()`.
+TexCreate version 3 focuses on template modularity which in simple terms means that instead of the prebuilt templates 
+being hardcoded into the program, they are instead managed by releases with a web service. Every new major version 
+expands on the core idea of TexCreate as a LaTeX project creator that helps ease development, and with every new version 
+the codebase increasingly becomes a lot more complex. 
 
-This project is for anyone who wants to save time creating LaTeX documents! Let's install the application and begin creating!!!!
+To get a good idea of how much the project has grown, consider the following dependency flow charts which show TexCreate 
+and related libraries/applications that work with it. 
 
+![TexCreate v1 & 2](TexCreate_v1_v2.png)
+![TexCreate v3](TexCreate_v3.png)
+
+> To look at all related repositories for TexCreate v3, take a look at the [texc_v3_sources](https://github.com/MKProj/texc_v3_sources) repo. 

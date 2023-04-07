@@ -1,19 +1,25 @@
 # Installing TexCreate
 
-> At the time of writing, TexCreate v3 is currently in beta 8
-
 ## Install Rust 
 
-To install TexCreate you will need the `cargo` package manager which means you will need to install 
+To install TexCreate you will need the `cargo` package manager (on Debian `amd64` Linux systems you can use alternative method) which means you will need to install 
 `rust`. The recommended way of installation is using `rustup`, which can be found [here](https://rustup.rs/) and 
 will allow you to install Rust for your particular operating system. 
 
 ## Install TexCreate 
 
-To install TexCreate, we will need to use `cargo` and install the latest beta (beta 8) of TexCreate version 3: 
+#### Cargo Method
 
 ```bash
-$ cargo install texcreate --version 3.0.0-beta.8
+# install via Cargo 
+$ cargo install texcreate
+```
+
+#### Debian Method
+
+```bash
+# this method is only for Debian amd64 Linux systems
+$ curl --proto '=https' https://texcreate.mkproj.com/sh | sudo sh
 ```
 
 With TexCreate installed, it is also recommended to have a LaTeX compiler installed as well, you may install 

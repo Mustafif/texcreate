@@ -19,16 +19,29 @@ an opensource template generator `texcgen` (note: TexCreate templates are built 
 is done in a web service `texcweb`. The ability to put a template into a JSON file using the handy `texcore` library I developed 
 allows it to be easily downloaded in the latest releases and TexCreate is able to know about these updates because of `texcweb`. 
 
-> If you are updating from an earlier beta to __Beta 9__, please make sure to update to repo v2. 
-> Since this beta uses TexCore `0.6.0` instead of `0.4.17`, earlier templates are broken. To update to the latest 
+> If you are updating from an earlier beta (before `Beta 9`) to stable, please make sure to update to the latest template repo (currently v2). 
+> Due to the update of TexCore `0.6.0` from `0.4.17`, earlier templates are broken. To update to the latest 
 > template use the command `texcreate update`. 
 
 ## How to get started?
 
 ### Installing
 
+#### Cargo Method 
+
 ```bash
-$ cargo install texcreate --version 3.0.0.beta.9
+# make sure to have rust installed 
+$ curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh
+# install via Cargo 
+$ cargo install texcreate
+```
+
+#### Debian Method 
+
+```bash
+# this method is only for Debian amd64 Linux systems
+# will automatically install autocomplete 
+$ curl --proto '=https' https://texcreate.mkproj.com/sh | sudo sh
 ```
 
 The new thing with TexCreate is that templates are locally stored in the directory `$HOME/.texcreate` where the structure 
@@ -158,3 +171,8 @@ name.pdf
   - Introduces `write_tex_files()` that is asynchronous and will write files in parallel 
 - Replaced `Compiler` & `CompilerMode` with `texc_v3_compiler_conf::*`
 - Replaced `web` module with `texc_v3_web`
+
+## Final Changes for Stable 
+- Added `upgrade` command to update `TexCreate` and templates. 
+- Added support for installing via Debian Package (currently only for `amd64`). 
+- Added support for autocomplete with the `gen-complete` command

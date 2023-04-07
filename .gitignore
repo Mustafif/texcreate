@@ -1,10 +1,4 @@
-/target
-/texcreate.toml
-/name
-snapcraft.yaml
-com.mkproj.texcreate.json
-generated-sources.json
-.flatpak-builder
-flatpak-cargo-generator.py
-build-dir
+target
+texcreate.toml
 Makefile
+releases
