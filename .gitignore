@@ -2,3 +2,4 @@ target
 texcreate.toml
 Makefile
 releases
+texcreate-complete.bash
