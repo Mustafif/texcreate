@@ -44,6 +44,15 @@ $ cargo install texcreate
 $ curl --proto '=https' https://texcreate.mkproj.com/sh | sudo sh
 ```
 
+### Setting up Autocomplete 
+This example will show how to do auto complete for the bash shell: 
+
+```bash
+$ apt-get install bash-completion -y
+$ texcreate gen-complete --shell bash
+$ mv texcreate.bash /usr/share/bash-completion/completions/
+```
+
 The new thing with TexCreate is that templates are locally stored in the directory `$HOME/.texcreate` where the structure 
 looks like the following: 
 

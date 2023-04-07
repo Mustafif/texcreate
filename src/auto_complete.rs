@@ -1,9 +1,9 @@
 
 use std::fs::File;
-use std::io::stdin;
+
 use crate::error::{Error, Result};
 use crate::{Cli, cprint};
-use termcolor::Color::{Magenta, Green};
+use termcolor::Color::{Green};
 use structopt::clap::Shell;
 use structopt::StructOpt;
 
@@ -27,7 +27,7 @@ pub fn get_name(shell: &Shell) -> String{
         Shell::PowerShell => "ps1",
         Shell::Elvish => "elv",
     };
-    format!("texcreate-complete.{}", extension)
+    format!("texcreate.{}", extension)
 }
 
 pub fn auto_complete(shell: String) -> Result<()> {
