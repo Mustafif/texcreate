@@ -1,9 +1,14 @@
+use std::str::FromStr;
 use crate::cprint;
 use crate::dir::DIR;
 use crate::error::*;
 use reqwest::Client;
 use termcolor::Color;
+use texcore::template::Version;
+use texcreate_repo::Repo;
 use tokio::spawn;
+use crate::error::Error::IncompatibleVersion;
+
 // The web address of texcreate to send requests to
 const ADDRESS: &str = "https://texcreate.mkproj.com";
 /// Returns the github link to download a template file given a version number and template name
@@ -14,6 +19,7 @@ pub fn gh_link(num: u64, name: &str) -> String {
 pub fn repo_link(num: u64) -> String {
     format!("https://github.com/MKProj/mkproj_texcgen/releases/download/v{num}/repo.toml")
 }
+
 /// Sends a request to get the latest mkproj template repo version number
 pub async fn get_latest_num() -> u64 {
     let client = Client::new();
@@ -32,15 +38,40 @@ async fn get_template_data(num: u64, name: &str) -> Vec<u8> {
     let bytes = resp.bytes().await.unwrap();
     bytes.to_vec()
 }
+
+// gets repo link
+async fn get_repo_link() -> String{
+    let num = get_latest_num().await;
+    repo_link(num)
+}
+
 // Gets the latest repo and saves it
 async fn get_latest_repo() -> Result<()> {
-    let num = get_latest_num().await;
-    let repo_link = repo_link(num);
+    let repo_link = get_repo_link().await;
     DIR.save_repo(&repo_link).await?;
     Ok(())
 }
+
+// the latest repo
+async fn latest_repo() -> Repo{
+    let repo_link = get_repo_link().await;
+    Repo::get_repo(&repo_link).await
+}
+
 /// Updates the mkprojects directory to the latest release
 pub async fn repo_update() -> Result<()> {
+    // check if repo exists...
+    if DIR.repo_exists(){
+        // check latest repo
+        let repo = latest_repo().await;
+        let min_version = repo.texc_vers();
+        let v = env!("CARGO_PKG_VERSION");
+        let current_vers = Version::from_str(v.trim()).unwrap();
+        if min_version > current_vers{
+            cprint!(Color::Red, "{}", IncompatibleVersion(current_vers, min_version).to_string());
+            return Ok(());
+        }
+    }
     // gets the latest repo in a separate thread
     spawn(get_latest_repo() )
         .await

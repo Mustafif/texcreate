@@ -116,6 +116,10 @@ impl Dir {
         file.write_all(s.as_bytes()).await?;
         Ok(())
     }
+    /// Check if `repo.toml` exits
+    pub fn repo_exists(&self) -> bool{
+        self.main_dir.join("repo.toml").exists()
+    }
     /// Clears the `mkproj` repo directory, used when updating to latest repo
     pub async fn clear(&self) -> Result<()> {
         remove_dir_all(&self.mkproj).await?;

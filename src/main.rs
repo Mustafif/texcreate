@@ -39,16 +39,23 @@ pub enum Cli {
     #[structopt(about = "Initialize TexCreate.")]
     Init,
     #[structopt(about = "Create a new project's config file.")]
-    New,
+    New{
+        #[structopt(short, long)]
+        ignore: Option<bool>
+    },
     #[structopt(about = "Build a project using a config file.")]
     Build {
         #[structopt(short, long, parse(from_os_str))]
         file: Option<PathBuf>,
+        #[structopt(short, long)]
+        ignore: Option<bool>
     },
     #[structopt(about = "Zip a project using a config file.")]
     Zip {
         #[structopt(short, long, parse(from_os_str))]
         file: Option<PathBuf>,
+        #[structopt(short, long)]
+        ignore: Option<bool>
     },
     #[structopt(about = "Updates to the latest MKProject templates.")]
     Update,
@@ -106,9 +113,11 @@ async fn main() -> Result<()> {
                 Some(r) => r?,
             }
         }
-        Cli::New => {
+        Cli::New{ignore} => {
             // checks to see if there is a new template
-            alert().await;
+            if ignore == Some(false) || ignore == None{
+                alert().await;
+            }
             // prompts the user to create a new config
             let config = Config::new()?;
             // get the TOML string
@@ -137,8 +146,11 @@ async fn main() -> Result<()> {
             // let the user know the project has successfully been created
             cprint!(Color::Green, "Successfully created `{}`", file_name);
         }
-        Cli::Build { file } => {
-            alert().await;
+        Cli::Build { file, ignore } => {
+            // checks to see if there is a new template
+            if ignore == Some(false) || ignore == None{
+                alert().await;
+            }
             // read config
             let path = file.unwrap_or(PathBuf::from("texcreate.toml"));
             // get `Config` by reading from the file's path
@@ -157,8 +169,11 @@ async fn main() -> Result<()> {
             }
             cprint!(Color::Green, "Successfully created `{}`", name);
         }
-        Cli::Zip { file } => {
-            alert().await;
+        Cli::Zip { file, ignore } => {
+            // checks to see if there is a new template
+            if ignore == Some(false) || ignore == None{
+                alert().await;
+            }
             // get the config path
             let path = file.unwrap_or(PathBuf::from("texcreate.toml"));
             // get `Config` by reading from the file's path

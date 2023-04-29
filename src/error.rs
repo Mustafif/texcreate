@@ -1,3 +1,4 @@
+use texcore::template::Version;
 use thiserror::Error;
 use tokio::io;
 
@@ -16,6 +17,8 @@ pub enum Error {
     // This will occur if the user puts in a repo that isn't `mkproj` or `custom`
     #[error("The repo `{0}` is invalid, only `mkproj` or `custom` is allowed!")]
     InvalidRepo(String),
+    #[error("TexCreate {0} is incompatible with latest repo!\nPlease upgrade to {1}...")]
+    IncompatibleVersion(Version, Version),
     // This will handle any IO Error
     #[error("IO Error")]
     IO(#[from] io::Error),
