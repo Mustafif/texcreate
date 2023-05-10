@@ -5,11 +5,13 @@
 ![Crates.io](https://img.shields.io/crates/d/texcreate)
 ![GitHub top language](https://img.shields.io/github/languages/top/MKProj/texcreate)
 
+[!["Buy Me A Coffee"](https://www.buymeacoffee.com/assets/img/custom_images/orange_img.png)](https://www.buymeacoffee.com/mustafif09Q)
+
+
 > This project is under the [MIT License](LICENSE)
 
 TexCreate is a LaTeX Project creator that allows users to easily create projects using a configuration file that will 
-define a template, project name, and metadata. Compared to version 2 which last saw an update 10 months ago, version 3 
-comes with the focus on template modularity and stability. 
+define a template, project name, and metadata. Compared to version 2 which last saw an update 10 months ago, version 3 comes with a focus on template modularity and stability. 
 
 ## Template Modularity? 
 In previous versions the templates are in someway embedded in the programs code, such as in version 2 we saw that being done 
@@ -134,54 +136,3 @@ name.pdf
 > Make sure to not change the `proj_name` field in `compiler.toml` or the command will not be able to compile. 
 
 
-## Changes in Beta 2 
-
-- Added the `compile` command 
-  - Required creating the `Compiler` type and making changes to `Project`
-- Added a `-r/--repo` flag to the `list` command 
-  - Allows to specify the `mkproj` or `custom` repo
-
-## Changes in Beta 3 
-- Added the `texcgen` command
-  - Allows users to create/interact with `texc_gen` using `texcreate`
-
-## Changes in Beta 4 
-- Fixed the `texcgen` command 
-- Altered the `update_alert()` to show a prettier message 
-
-## Changes in Beta 5 
-- Added the `zip` command 
-  - Allows users to create a zip file of a TexCreate project
-- Added the `open` command 
-  - Opens [texcreate.mkproj.com](https://texcreate.mkproj.com) in their default browser
-- Added the `web` command
-  - Runs a web service to create TexCreate projects 
-
-## Changes in Beta 6 
-- Updated to `texcore 0.4.18`
-- Fixed breaking in `3.0.0-beta.5`
-- Fixed logging in `web` command 
-- Added `papersize` option to `WebConfig` because of update to `texcore`
-
-## Changes in Beta 7 
-- Optimizations towards the `zip` & `build` commands 
-- Refactored with `clippy` suggestions 
-- Added `InvalidRepo` error variant 
-- Fixed `build` command with not adding the `packages` field 
-- Fixed `zip` command with not changing metadata and adding the `packages` field
-- Added global `DIR` variable to `dir` module to allow for lazily evaluated directory paths
-- Added detailed comments to whole project
-
-## Changes in Beta 8 
-- Added `mode` & `clean` fields in the `Compiler` struct 
-
-## Changes in Beta 9 
-- Updated to `texcore 0.6.0`
-  - Introduces `write_tex_files()` that is asynchronous and will write files in parallel 
-- Replaced `Compiler` & `CompilerMode` with `texc_v3_compiler_conf::*`
-- Replaced `web` module with `texc_v3_web`
-
-## Final Changes for Stable 
-- Added `upgrade` command to update `TexCreate` and templates. 
-- Added support for installing via Debian Package (currently only for `amd64`). 
-- Added support for autocomplete with the `gen-complete` command
