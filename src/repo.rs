@@ -1,4 +1,5 @@
 use std::str::FromStr;
+use std::time::Duration;
 use crate::cprint;
 use crate::dir::DIR;
 use crate::error::*;
@@ -21,14 +22,14 @@ pub fn repo_link(num: u64) -> String {
 }
 
 /// Sends a request to get the latest mkproj template repo version number
-pub async fn get_latest_num() -> u64 {
+pub async fn get_latest_num() -> Result<u64> {
     let client = Client::new();
     let link = format!("{ADDRESS}/repo/latest");
-    let resp = client.get(&link).send().await.unwrap();
-    let b = resp.bytes().await.unwrap();
+    let resp = client.get(&link).timeout(Duration::from_secs(10)).send().await.or(Err(Error::Timeout));
+    let b = resp?.bytes().await.unwrap();
     let s = String::from_utf8(b.to_vec()).unwrap();
     let num = s.trim().parse::<u64>().unwrap();
-    num
+    Ok(num)
 }
 /// Returns a vector of bytes of a template given a version number and template name
 async fn get_template_data(num: u64, name: &str) -> Vec<u8> {
@@ -40,22 +41,22 @@ async fn get_template_data(num: u64, name: &str) -> Vec<u8> {
 }
 
 // gets repo link
-async fn get_repo_link() -> String{
-    let num = get_latest_num().await;
-    repo_link(num)
+async fn get_repo_link() -> Result<String>{
+    let num = get_latest_num().await?;
+    Ok(repo_link(num))
 }
 
 // Gets the latest repo and saves it
 async fn get_latest_repo() -> Result<()> {
-    let repo_link = get_repo_link().await;
+    let repo_link = get_repo_link().await?;
     DIR.save_repo(&repo_link).await?;
     Ok(())
 }
 
 // the latest repo
-async fn latest_repo() -> Repo{
-    let repo_link = get_repo_link().await;
-    Repo::get_repo(&repo_link).await
+async fn latest_repo() -> Result<Repo>{
+    let repo_link = get_repo_link().await?;
+    Ok(Repo::get_repo(&repo_link).await)
 }
 
 /// Updates the mkprojects directory to the latest release
@@ -63,7 +64,7 @@ pub async fn repo_update() -> Result<()> {
     // check if repo exists...
     if DIR.repo_exists(){
         // check latest repo
-        let repo = latest_repo().await;
+        let repo = latest_repo().await?;
         let min_version = repo.texc_vers();
         let v = env!("CARGO_PKG_VERSION");
         let current_vers = Version::from_str(v.trim()).unwrap();
@@ -81,7 +82,7 @@ pub async fn repo_update() -> Result<()> {
     // read the repo so we can get all of the templates name to download
     let repo = DIR.read_repo().await?;
     // get the latest version number
-    let num = get_latest_num().await;
+    let num = get_latest_num().await?;
     // stores a tuple of `(template name, template bytes join handle)`
     let mut tasks = Vec::new();
     // iterate through `repo` for all template names in the release
@@ -131,7 +132,10 @@ pub async fn update_alert() -> Option<String> {
             let v = r.version();
             // to get the current version, we will use the `get_latest_num()` function that sends a
             // request to get the latest release version.
-            let current = get_latest_num().await;
+            let current = match get_latest_num().await{
+                Ok(v) => v,
+                Err(_) => return None
+            };
             // we will check if the current version is greater than `v`
             if current > v {
                 // The goal of our message is to look like the following:
