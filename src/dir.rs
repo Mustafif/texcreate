@@ -4,6 +4,7 @@ use crate::error::*;
 use dirs::home_dir;
 use lazy_static::lazy_static;
 use std::path::PathBuf;
+use indicatif::{ProgressBar, ProgressStyle};
 use texcore::template::Template;
 use texcreate_repo::Repo;
 use tokio::fs::{create_dir, read_to_string, remove_dir_all, File};
@@ -55,12 +56,28 @@ impl Dir {
     }
     /// Saves an mkproject template given the filename and its data
     pub async fn save_mkproj(&self, file_name: &str, data: &[u8]) -> Result<()> {
+        let file_name = file_name.to_string();
         // To create the proper path, we will join the filename to the `mkproj` directory path
-        let path = self.mkproj.join(file_name);
+        let path = self.mkproj.join(&file_name);
         // With the proper path, we can create the template
         let mut file = File::create(&path).await?;
-        // after we can write to the file with the given bytes
-        file.write_all(data).await?;
+
+        let pb = ProgressBar::new(data.len() as u64);
+        pb.set_style(ProgressStyle::default_bar()
+            .template("{spinner:.green} [{msg}] [{bar:40.cyan/blue}] {bytes}/{total_bytes} ({eta})").unwrap()
+            .progress_chars("#>-"));
+
+        // Set the progress bar's message to the file name
+        pb.set_message(file_name.clone());
+
+        // Write the chunks of bytes to the file
+        for chunk in data.chunks(1024){
+            file.write_all(chunk).await?;
+            pb.inc(chunk.len() as u64);
+        }
+
+        pb.finish_with_message(file_name.clone());
+
         Ok(())
     }
     /// Searches for a template given a name and repository to look in, and will return a `Template`
