@@ -79,6 +79,11 @@ pub enum Cli {
         #[structopt(short, long)]
         shell: String
     },
+    #[structopt(about = "Send feedback on email to the TexCreate project!")]
+    Feedback{
+        #[structopt(short, long)]
+        subject: String
+    },
 }
 
 #[tokio::main]
@@ -246,6 +251,10 @@ async fn main() -> Result<()> {
         }
         Cli::GenComplete{shell} => {
             auto_complete(shell)?
+        }
+        Cli::Feedback{subject} => {
+            let url = format!("mailto:texcreate_feedback@mkproj.com?subject={subject}");
+            open::that(&url)?
         }
     }
     Ok(())
