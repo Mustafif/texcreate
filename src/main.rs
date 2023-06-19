@@ -254,7 +254,7 @@ async fn main() -> Result<()> {
         }
         Cli::Feedback{subject} => {
             let url = format!("mailto:texcreate_feedback@mkproj.com?subject={subject}");
-            open::that(&url)?
+            open::that(url)?
         }
     }
     Ok(())
