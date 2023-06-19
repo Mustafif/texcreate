@@ -115,7 +115,7 @@ async fn main() -> Result<()> {
         }
         Cli::New{ignore} => {
             // checks to see if there is a new template
-            if ignore == Some(false) || ignore == None{
+            if ignore == Some(false) || ignore.is_none(){
                 alert().await;
             }
             // prompts the user to create a new config
@@ -148,7 +148,7 @@ async fn main() -> Result<()> {
         }
         Cli::Build { file, ignore } => {
             // checks to see if there is a new template
-            if ignore == Some(false) || ignore == None{
+            if ignore == Some(false) || ignore.is_none(){
                 alert().await;
             }
             // read config
@@ -171,7 +171,7 @@ async fn main() -> Result<()> {
         }
         Cli::Zip { file, ignore } => {
             // checks to see if there is a new template
-            if ignore == Some(false) || ignore == None{
+            if ignore == Some(false) || ignore.is_none(){
                 alert().await;
             }
             // get the config path
