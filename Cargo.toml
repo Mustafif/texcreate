@@ -1,7 +1,7 @@
 [package]
 name = "texcreate"
 description = "A LaTeX Project Creator by Mustafif Khan"
-version = "3.1.0"
+version = "3.2.0"
 edition = "2021"
 authors = ["Mustafif Khan"]
 license = "MIT"
@@ -12,24 +12,25 @@ documentation = "https://mkproj.github.io/texcreate/"
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
 [dependencies]
-dirs = "5.0.0"
-reqwest = "0.11.14"
+dirs = "5.0.1"
+reqwest = "0.11.18"
 structopt = "0.3.26"
 texcore = { version = "0.7.2", features = ["texcreate_template", "async"] }
 texcreate_repo = "0.2"
-tokio = { version = "1.25.0", features = ["full"] }
-thiserror = "1.0.38"
-toml = "0.7.2"
-serde = { version = "1.0.152", features = ["derive"] }
+tokio = { version = "1.28.1", features = ["full"] }
+thiserror = "1.0.40"
+toml = "0.7.4"
+serde = { version = "1.0.163", features = ["derive"] }
 termcolor = "1.2.0"
-walkdir = "2.3.2"
-zip = "0.6.4"
+walkdir = "2.3.3"
+zip = "0.6.6"
 git2 = "0.17.1"
-open = "4.0.1"
-rocket = "0.5.0-rc.2"
+open = "4.1.0"
+rocket = "0.5.0-rc.3"
 lazy_static = "1.4.0"
 texc_v3_compiler_conf = "0.1.0"
-texc_v3_web = "0.1.0"
+texc_v3_web = "0.1.2"
+indicatif = "0.17.5"
 
 [package.metadata.deb]
 maintainer = "Mustafif Khan <mustafif.khan@mkproj.com>"

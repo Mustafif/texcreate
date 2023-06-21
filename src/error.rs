@@ -22,4 +22,6 @@ pub enum Error {
     // This will handle any IO Error
     #[error("IO Error")]
     IO(#[from] io::Error),
+    #[error("Connection timeout - try again or use the `--ignore` flag if available on command.")]
+    Timeout,
 }

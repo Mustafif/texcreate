@@ -79,6 +79,13 @@ pub enum Cli {
         #[structopt(short, long)]
         shell: String
     },
+    #[structopt(about = "Send feedback on email to the TexCreate project!")]
+    Feedback{
+        #[structopt(short, long)]
+        subject: String
+    },
+    #[structopt(about = "Support and donate to the TexCreate project!")]
+    Donate
 }
 
 #[tokio::main]
@@ -115,7 +122,7 @@ async fn main() -> Result<()> {
         }
         Cli::New{ignore} => {
             // checks to see if there is a new template
-            if ignore == Some(false) || ignore == None{
+            if ignore == Some(false) || ignore.is_none(){
                 alert().await;
             }
             // prompts the user to create a new config
@@ -148,7 +155,7 @@ async fn main() -> Result<()> {
         }
         Cli::Build { file, ignore } => {
             // checks to see if there is a new template
-            if ignore == Some(false) || ignore == None{
+            if ignore == Some(false) || ignore.is_none(){
                 alert().await;
             }
             // read config
@@ -171,7 +178,7 @@ async fn main() -> Result<()> {
         }
         Cli::Zip { file, ignore } => {
             // checks to see if there is a new template
-            if ignore == Some(false) || ignore == None{
+            if ignore == Some(false) || ignore.is_none(){
                 alert().await;
             }
             // get the config path
@@ -247,6 +254,11 @@ async fn main() -> Result<()> {
         Cli::GenComplete{shell} => {
             auto_complete(shell)?
         }
+        Cli::Feedback{subject} => {
+            let url = format!("mailto:texcreate_feedback@mkproj.com?subject={subject}");
+            open::that(url)?
+        }
+        Cli::Donate => open::that("https://www.buymeacoffee.com/mustafif09Q")?
     }
     Ok(())
 }

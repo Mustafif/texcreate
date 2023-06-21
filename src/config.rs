@@ -1,3 +1,4 @@
+use std::fmt::Formatter;
 use crate::cprint;
 use crate::dir::DIR;
 use crate::error::{Error, Result};
@@ -153,10 +154,6 @@ impl Config {
         let config = from_str(&s).unwrap();
         Ok(config)
     }
-    /// Returns `Config` as a TOML string
-    pub fn to_string(&self) -> String {
-        to_string_pretty(&self).unwrap()
-    }
     /// Returns the project name
     pub fn name(&self) -> String {
         self.project.proj_name.to_string()
@@ -271,5 +268,11 @@ impl Config {
         let _ = writer.finish().unwrap();
         // return the zip file name
         Ok(zip_name)
+    }
+}
+
+impl std::fmt::Display for Config{
+    fn fmt(&self, f: &mut Formatter<'_>) -> std::fmt::Result {
+        f.write_str(&to_string_pretty(&self).unwrap())
     }
 }
