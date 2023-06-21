@@ -84,6 +84,8 @@ pub enum Cli {
         #[structopt(short, long)]
         subject: String
     },
+    #[structopt(about = "Support and donate to the TexCreate project!")]
+    Donate
 }
 
 #[tokio::main]
@@ -256,6 +258,7 @@ async fn main() -> Result<()> {
             let url = format!("mailto:texcreate_feedback@mkproj.com?subject={subject}");
             open::that(url)?
         }
+        Cli::Donate => open::that("https://www.buymeacoffee.com/mustafif09Q")?
     }
     Ok(())
 }
